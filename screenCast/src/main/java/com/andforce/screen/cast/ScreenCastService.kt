@@ -12,8 +12,6 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import com.andforce.screen.cast.coroutine.RecordViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 
@@ -22,6 +20,8 @@ class ScreenCastService: Service() {
     private val recordViewModel: RecordViewModel by inject()
 
     companion object {
+        const val TAG = "ScreenCastService"
+
         const val NOTIFICATION_ID = 1
         // 启动方法
         fun startService(context: Context, isForeground: Boolean, data: Intent, code: Int) {
@@ -34,18 +34,24 @@ class ScreenCastService: Service() {
                 context.applicationContext.startService(startIntent)
             }
         }
+
+        fun stopService(context: Context) {
+            val intent = Intent(context.applicationContext, ScreenCastService::class.java)
+            context.stopService(intent)
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
 
         //startForeground(NOTIFICATION_ID, createNotification())
-        Log.d("RecordViewModel", "RecordViewModel2: $recordViewModel")
+        Log.d(TAG, "onCreate")
         mpm = applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "onDestroy")
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -54,6 +60,8 @@ class ScreenCastService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        Log.d(TAG, "onStartCommand")
 
         if (intent == null) {
             return START_STICKY

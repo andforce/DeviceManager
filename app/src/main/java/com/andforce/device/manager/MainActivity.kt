@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     is RecordState.Stopped -> {
                         viewMainBinding.tvInfo.text = "Stopped"
+                        ScreenCastService.stopService(this@MainActivity)
                     }
                 }
             }
