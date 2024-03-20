@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class MediaProjectionViewModel(act: AppCompatActivity) : ViewModel() {
+class MediaProjectionRequestViewModel(act: AppCompatActivity) : ViewModel() {
 
     private val _result = MutableLiveData<Result>()
     val result: LiveData<Result> get() = _result

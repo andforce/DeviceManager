@@ -2,6 +2,7 @@ package com.andforce.screen.cast.listener
 
 import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
+import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
 import android.media.projection.MediaProjection
 
@@ -16,6 +17,8 @@ class VirtualDisplayImageReader(
     private var imageReader: ImageReader? = null
     private var imageListener: OnImageListener? = null
 
+    private var statusListener: RecordStatusListener? = null
+
     fun start(width: Int, height: Int, dpi: Int) {
         imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 5)
 
@@ -24,15 +27,40 @@ class VirtualDisplayImageReader(
         mediaProjection.createVirtualDisplay(
             "$TAG-display",
             width, height, dpi, flags,
-            imageReader!!.surface, null, null
+            imageReader!!.surface,
+            object : VirtualDisplay.Callback() {
+                override fun onPaused() {
+                    super.onPaused()
+                }
+
+                override fun onResumed() {
+                    super.onResumed()
+                    statusListener?.onStatus(RecordState.Recording)
+                }
+
+                override fun onStopped() {
+                    super.onStopped()
+                    statusListener?.onStatus(RecordState.Recording)
+                }
+            },
+            null
         )
     }
 
     private val mediaCallBack = object : MediaProjection.Callback() {
         override fun onStop() {
             super.onStop()
+            statusListener?.onStatus(RecordState.Stopped)
             imageListener?.onFinished()
         }
+    }
+
+    fun registerStatusListener(listener: RecordStatusListener) {
+        this.statusListener = listener
+    }
+
+    fun unregisterStatusListener() {
+        this.statusListener = null
     }
 
     fun registerListener(imageListener: OnImageListener) {

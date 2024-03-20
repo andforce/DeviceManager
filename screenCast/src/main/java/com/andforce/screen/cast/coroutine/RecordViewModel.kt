@@ -1,44 +1,47 @@
 package com.andforce.screen.cast.coroutine
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.media.projection.MediaProjection
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.andforce.screen.cast.listener.RecordState
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class RecordViewModel(private val scope: CoroutineScope) {
+class RecordViewModel :ViewModel(){
 
-    private val repo: RecordRepository = RecordRepository()
+    private val recordRepository = RecordRepository()
 
     private val _capturedImage = MutableStateFlow<Bitmap?>(null)
     val capturedImage: StateFlow<Bitmap?> get() = _capturedImage
 
-    private val _recordState = MutableLiveData<RecordState>(RecordState.Stopped)
-    val recordState: MutableLiveData<RecordState> get() = _recordState
+    private val _recordState = MutableStateFlow<RecordState>(RecordState.Stopped)
+    val recordState: LiveData<RecordState> = _recordState.asLiveData()
 
     fun startCaptureImages(context: Context, mp: MediaProjection, scale: Float) {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("Caught $exception")
         }
-        scope.launch(handler) {
-            repo.captureBitmap(context.applicationContext, mp, scale).collect() {
+        viewModelScope.launch(handler) {
+            _recordState.tryEmit(RecordState.Recording)
+            recordRepository.captureBitmap(context.applicationContext, mp, scale).collectLatest {
                 _capturedImage.value = it
             }
         }
-    }
 
-    fun updateRecordState(state: RecordState) {
-        _recordState.value = state
-    }
-
-    sealed class RecordState {
-        data object Recording : RecordState()
-        data object Stopped : RecordState()
+        viewModelScope.launch {
+            recordRepository.listenCapture().collect {
+                _recordState.tryEmit(it)
+            }
+        }
     }
 
 }

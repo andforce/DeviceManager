@@ -35,4 +35,6 @@ class RecordRepository {
                 image.close()
             }
         }
+
+    suspend fun listenCapture() = recordDataSource.listenRecordStatus()
 }

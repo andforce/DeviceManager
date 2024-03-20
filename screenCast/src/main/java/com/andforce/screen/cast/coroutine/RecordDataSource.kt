@@ -6,6 +6,8 @@ import android.media.projection.MediaProjection
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import com.andforce.screen.cast.listener.OnImageListener
+import com.andforce.screen.cast.listener.RecordState
+import com.andforce.screen.cast.listener.RecordStatusListener
 import com.andforce.screen.cast.listener.VirtualDisplayImageReader
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
@@ -17,10 +19,32 @@ import kotlinx.coroutines.flow.callbackFlow
 // https://www.jianshu.com/p/e73863ae9ae9
 
 class RecordDataSource {
+    private var virtualDisplayImageReader: VirtualDisplayImageReader? = null
 
-    suspend fun captureImages(context: Context, mp:MediaProjection, scale: Float) = callbackFlow<Image> {
+    suspend fun listenRecordStatus() = callbackFlow {
 
-        val callback = object: OnImageListener {
+        val callback = object : RecordStatusListener {
+            override fun onStatus(status: RecordState) {
+                trySend(status)
+            }
+        }
+
+        val virtualDisplayImageReader = virtualDisplayImageReader?.apply {
+            registerStatusListener(callback)
+        }
+
+        awaitClose {
+            virtualDisplayImageReader?.unregisterStatusListener()
+        }
+    }
+
+    suspend fun captureImages(context: Context, mp: MediaProjection, scale: Float) = callbackFlow {
+
+        if (virtualDisplayImageReader == null) {
+            virtualDisplayImageReader = VirtualDisplayImageReader(mp)
+        }
+
+        val callback = object : OnImageListener {
             override fun onImage(image: Image) {
                 trySendBlocking(image)
             }
@@ -30,7 +54,8 @@ class RecordDataSource {
             }
         }
 
-        var windowManager:WindowManager? = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
+        val windowManager: WindowManager? =
+            context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
 
         if (windowManager == null) {
             cancel("WindowManager is null", CancellationException("WindowManager is null"))
@@ -43,13 +68,13 @@ class RecordDataSource {
         val finalWidthPixels = (metrics.widthPixels * scale).toInt()
         val finalHeightPixels = (metrics.heightPixels * scale).toInt()
 
-        val virtualDisplayImageReader = VirtualDisplayImageReader(mp).apply {
+        val virtualDisplayImageReader = virtualDisplayImageReader?.apply {
             start(finalWidthPixels, finalHeightPixels, metrics.densityDpi)
             registerListener(callback)
         }
 
         awaitClose {
-            virtualDisplayImageReader.unregisterListener()
+            virtualDisplayImageReader?.unregisterListener()
         }
     }
 }

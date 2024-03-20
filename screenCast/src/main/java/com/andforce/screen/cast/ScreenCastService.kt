@@ -12,6 +12,8 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import com.andforce.screen.cast.coroutine.RecordViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 
@@ -44,8 +46,8 @@ class ScreenCastService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        recordViewModel.updateRecordState(RecordViewModel.RecordState.Stopped)
     }
+
     override fun onBind(intent: Intent?): IBinder? {
 
         return null
@@ -67,7 +69,6 @@ class ScreenCastService: Service() {
 
         mpm?.getMediaProjection(code, data)?.let { mp ->
             recordViewModel.startCaptureImages(this, mp, 0.35f)
-            recordViewModel.updateRecordState(RecordViewModel.RecordState.Recording)
         }
 
         return START_STICKY

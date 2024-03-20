@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,11 +16,13 @@ import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
-import com.andforce.screen.cast.MediaProjectionViewModel
+import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.screen.cast.listener.RecordState
 import com.andforce.socket.SocketEventViewModel
 import com.andforce.socket.SocketStatusListener
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -29,9 +32,9 @@ class MainActivity : AppCompatActivity() {
     private val viewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MediaProjectionViewModel(this@MainActivity) as T
+                return MediaProjectionRequestViewModel(this@MainActivity) as T
             }
-        })[MediaProjectionViewModel::class.java]
+        })[MediaProjectionRequestViewModel::class.java]
     }
 
     private val viewMainBinding by lazy {
@@ -75,30 +78,32 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("RecordViewModel", "RecordViewModel1: $recordViewModel")
 
-        recordViewModel.recordState.observe(this) {
-            when (it) {
-                is RecordViewModel.RecordState.Recording -> {
-                    viewMainBinding.tvInfo.text = "Recording"
-                }
-                is RecordViewModel.RecordState.Stopped -> {
-                    viewMainBinding.tvInfo.text = "Stopped"
+        lifecycleScope.launch {
+            recordViewModel.recordState.observe(this@MainActivity) {
+                when (it) {
+                    is RecordState.Recording -> {
+                        viewMainBinding.tvInfo.text = "Recording"
+                    }
+                    is RecordState.Stopped -> {
+                        viewMainBinding.tvInfo.text = "Stopped"
+                    }
                 }
             }
         }
 
         viewModel.result.observe(this) {
             when (it) {
-                is MediaProjectionViewModel.Result.Success -> {
+                is MediaProjectionRequestViewModel.Result.Success -> {
                     ScreenCastService.startService(this, false, it.data, it.resultCode)
                 }
-                MediaProjectionViewModel.Result.PermissionDenied -> {
+                MediaProjectionRequestViewModel.Result.PermissionDenied -> {
                     Toast.makeText(this, "User did not grant permission", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         viewMainBinding.btnStart.setOnClickListener {
-            if (recordViewModel.recordState.value is RecordViewModel.RecordState.Recording) {
+            if (recordViewModel.recordState.value is RecordState.Recording) {
                 Toast.makeText(this, "Recording, no need start", Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch {

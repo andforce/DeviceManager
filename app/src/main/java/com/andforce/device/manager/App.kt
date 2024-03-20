@@ -18,7 +18,7 @@ class App : Application() {
         // 定义 Koin 模块
         val myModule = module {
             // 将 MyViewModel 定义为全局单例
-            single { RecordViewModel(MainScope()) }
+            single { RecordViewModel() }
             single { SocketEventViewModel() }
             single { PackageManagerViewModel() }
             single { NetworkViewModel() }
