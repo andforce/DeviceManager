@@ -45,9 +45,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(viewMainBinding.root)
 
-//        val daemon = Intent(this, DaemonActivity::class.java)
-//        startActivity(daemon)
-
         val adapter = InstalledAppAdapter(this.applicationContext)
         viewMainBinding.rvList.layoutManager = LinearLayoutManager(this)
         // 设置上下间隔
@@ -107,6 +104,12 @@ class MainActivity : AppCompatActivity() {
 
         viewMainBinding.btnTest.setOnClickListener {
             Toast.makeText(this, "收到点击事件了", Toast.LENGTH_SHORT).show()
+        }
+
+        viewMainBinding.btnSocketService.setOnClickListener {
+            val intent = android.content.Intent(this, com.andforce.socket.SocketService::class.java)
+            intent.putExtra("socketUrl", "http://10.66.32.51:3001")
+            startService(intent)
         }
 
         lifecycleScope.launch {

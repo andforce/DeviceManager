@@ -34,7 +34,7 @@ class NetworkViewModel : ViewModel() {
     private val downloadService = retrofit.create(ApiService::class.java)
 
     private val _stateFlow = MutableStateFlow<File?>(null)
-    val stateFlow: Flow<File> = _stateFlow.filter { it != null }.mapNotNull { it }
+    val fileDownloadStateFlow: Flow<File> = _stateFlow.filter { it != null }.mapNotNull { it }
 
     fun downloadApk(context: Context, name: String, url: String) {
         viewModelScope.launch {

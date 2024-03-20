@@ -34,6 +34,10 @@ class SocketClient(url: String) {
         }
     }
 
+    fun isConnected(): Boolean {
+        return socket?.connected() == true
+    }
+
     fun startConnection() {
         socket?.on(Socket.EVENT_CONNECT, Emitter.Listener {
             Log.d("SocketClient", "connect")
