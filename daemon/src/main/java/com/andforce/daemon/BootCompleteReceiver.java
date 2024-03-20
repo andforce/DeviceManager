@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
+    private static final String TAG = "BootCompleteReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null) {
@@ -15,7 +16,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
             Intent startIntent = new Intent(context, DaemonService.class);
             context.startService(startIntent);
 
-            Log.i("BootCompleteReceiver", "start SocketEventService");
+            Log.i(TAG, "start SocketEventService");
             Intent socketServiceIntent = new Intent();
             socketServiceIntent.setPackage(context.getPackageName());
             socketServiceIntent.setAction("com.andforce.socket.SocketEventService");

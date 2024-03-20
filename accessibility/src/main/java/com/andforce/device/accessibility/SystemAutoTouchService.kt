@@ -15,6 +15,10 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SystemAutoTouchService: Service() {
+    companion object {
+        val TAG = "SystemAutoTouchService"
+    }
+
     private val socketEventViewModel: SocketEventViewModel by inject()
 
     private var socketEventJob: Job? = null
@@ -24,30 +28,34 @@ class SystemAutoTouchService: Service() {
     override fun onCreate() {
         super.onCreate()
 
+        Log.d(TAG, "onCreate")
+
         socketEventJob = GlobalScope.launch {
 
-            socketEventViewModel.eventFlow.buffer(capacity = 1024).collect {
+            socketEventViewModel.mouseEventFlow.buffer(capacity = 1024).collect {
 
-                it?.let {
-                    Log.i("SystemAutoTouchService", "collect MouseEvent: $it")
+                if (!AutoTouchManager.isAccessibility) {
+                    it?.let {
+                        Log.i(TAG, "collect MouseEvent: $it")
 
-                    val screenW = ScreenUtils.metrics(this@SystemAutoTouchService).widthPixels
-                    val screenH = ScreenUtils.metrics(this@SystemAutoTouchService).heightPixels
+                        val screenW = ScreenUtils.metrics(this@SystemAutoTouchService).widthPixels
+                        val screenH = ScreenUtils.metrics(this@SystemAutoTouchService).heightPixels
 
-                    val scaleW = screenW / it.remoteWidth.toFloat()
-                    val scaleH = screenH / it.remoteHeight.toFloat()
-                    val fromRealX = if (it.x * scaleW < 0) 0f else it.x * scaleW
-                    val fromRealY = if (it.y * scaleH < 0) 0f else it.y * scaleH
+                        val scaleW = screenW / it.remoteWidth.toFloat()
+                        val scaleH = screenH / it.remoteHeight.toFloat()
+                        val fromRealX = if (it.x * scaleW < 0) 0f else it.x * scaleW
+                        val fromRealY = if (it.y * scaleH < 0) 0f else it.y * scaleH
 
-                    when (it) {
-                        is com.andforce.socket.MouseEvent.Down -> {
-                            injectEventHelper.injectTouchDownSystem(fromRealX,fromRealY)
-                        }
-                        is com.andforce.socket.MouseEvent.Move -> {
-                            injectEventHelper.injectTouchMoveSystem(fromRealX,fromRealY)
-                        }
-                        is com.andforce.socket.MouseEvent.Up -> {
-                            injectEventHelper.injectTouchUpSystem(fromRealX,fromRealY)
+                        when (it) {
+                            is com.andforce.socket.MouseEvent.Down -> {
+                                injectEventHelper.injectTouchDownSystem(fromRealX,fromRealY)
+                            }
+                            is com.andforce.socket.MouseEvent.Move -> {
+                                injectEventHelper.injectTouchMoveSystem(fromRealX,fromRealY)
+                            }
+                            is com.andforce.socket.MouseEvent.Up -> {
+                                injectEventHelper.injectTouchUpSystem(fromRealX,fromRealY)
+                            }
                         }
                     }
                 }
@@ -56,11 +64,13 @@ class SystemAutoTouchService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand")
         return START_STICKY
     }
     override fun onDestroy() {
         super.onDestroy()
         socketEventJob?.cancel()
+        Log.d(TAG, "onStartCommand")
     }
 
     override fun onBind(intent: Intent?): IBinder? {

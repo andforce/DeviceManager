@@ -3,6 +3,8 @@ package com.andforce.socket
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 
 class SocketEventRepository {
@@ -36,6 +38,19 @@ class SocketEventRepository {
         socketClient.registerApkEventListener(listener)
         awaitClose {
             socketClient.unRegisterApkEventListener()
+        }
+    }
+
+    suspend fun listenSocketStatus(socketClient: SocketClient): Flow<SocketStatusListener.SocketStatus> = callbackFlow {
+        val listener = object : SocketStatusListener {
+
+            override fun onStatus(status: SocketStatusListener.SocketStatus) {
+                trySend(status)
+            }
+        }
+        socketClient.registerSocketStatusListener(listener)
+        awaitClose {
+            socketClient.unregisterSocketStatusListener()
         }
     }
 }

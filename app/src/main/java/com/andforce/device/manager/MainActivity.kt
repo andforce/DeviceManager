@@ -19,6 +19,7 @@ import com.andforce.screen.cast.MediaProjectionViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.socket.SocketEventViewModel
+import com.andforce.socket.SocketStatusListener
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -44,6 +45,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewMainBinding.root)
+
+        // 启动Socket
+        val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
+        startService(intent)
 
         val adapter = InstalledAppAdapter(this.applicationContext)
         viewMainBinding.rvList.layoutManager = LinearLayoutManager(this)
@@ -102,15 +107,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewMainBinding.checkboxRemoteControl.setOnCheckedChangeListener { buttonView, isChecked ->
+        viewMainBinding.checkboxRemoteControl.setOnClickListener() {
             val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
-            if (isChecked) {
-                startService(intent)
-            }
+            startService(intent)
         }
 
         lifecycleScope.launch {
-            socketEventViewModel.eventFlow.collect {
+            socketEventViewModel.socketStatusLiveData.observe(this@MainActivity) {
+                when(it) {
+                    SocketStatusListener.SocketStatus.CONNECTING -> {
+                        viewMainBinding.socketStatus.text = "Socket:CONNECTING"
+                        viewMainBinding.checkboxRemoteControl.isEnabled = true
+                    }
+                    SocketStatusListener.SocketStatus.CONNECTED -> {
+                        viewMainBinding.socketStatus.text = "Socket:CONNECTED"
+                        viewMainBinding.checkboxRemoteControl.isEnabled = false
+                    }
+
+                    SocketStatusListener.SocketStatus.DISCONNECTED-> {
+                        viewMainBinding.socketStatus.text = "Socket:DISCONNECTED"
+                        viewMainBinding.checkboxRemoteControl.isEnabled = true
+                    }
+                    SocketStatusListener.SocketStatus.CONNECT_ERROR-> {
+                        viewMainBinding.socketStatus.text = "Socket:CONNECT_ERROR"
+                        viewMainBinding.checkboxRemoteControl.isEnabled = true
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            socketEventViewModel.mouseEventFlow.collect {
                 it?.let {
                     when (it) {
                         is MouseEvent.Down -> {

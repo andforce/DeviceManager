@@ -2,6 +2,7 @@ package com.andforce.socket
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,13 +19,15 @@ class SocketEventViewModel : ViewModel() {
     private var socketClient: SocketClient? = null
     private var socketUrl: String = "http://192.168.2.183:3001"
 
+    private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0)
+    var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
+
     private val _apkFilePushEventFlow = MutableSharedFlow<ApkEvent?>(replay = 0)
     var apkFilePushEventFlow: SharedFlow<ApkEvent?> = _apkFilePushEventFlow
 
 
-    private val _eventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
-    var eventFlow: SharedFlow<MouseEvent?> = _eventFlow
-
+    private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
+    var mouseEventFlow: SharedFlow<MouseEvent?> = _mouseEventFlow
 
     fun connectIfNeed() {
 
@@ -48,7 +51,7 @@ class SocketEventViewModel : ViewModel() {
         viewModelScope.launch {
             socketClient?.let {
                 socketEventRepository.listenMouseEventFromSocket(it).buffer(1024).collect { mouseEvent->
-                    _eventFlow.emit(mouseEvent)
+                    _mouseEventFlow.emit(mouseEvent)
                 }
             }
         }
@@ -59,6 +62,16 @@ class SocketEventViewModel : ViewModel() {
             socketClient?.let {
                 socketEventRepository.listenApkFilePushEvent(it).buffer(1024).collectLatest { apkEvent->
                     _apkFilePushEventFlow.emit(apkEvent)
+                }
+            }
+        }
+    }
+
+    fun listenSocketStatus() {
+        viewModelScope.launch {
+            socketClient?.let {
+                socketEventRepository.listenSocketStatus(it).collectLatest {status->
+                    _socketStatueEventFlow.emit(status)
                 }
             }
         }

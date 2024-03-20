@@ -20,6 +20,10 @@ import org.koin.android.ext.android.inject
 
 class SocketEventService: Service() {
 
+    companion object {
+        const val TAG = "SocketEventService"
+    }
+
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val downloaderViewModel: NetworkViewModel by inject()
     private val recordViewModel: RecordViewModel by inject()
@@ -34,16 +38,21 @@ class SocketEventService: Service() {
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
+            Log.d(TAG, "ConnectivityManager.NetworkCallback-onAvailable")
+
             // 网络可用时调用
             socketEventViewModel.connectIfNeed()
             socketEventViewModel.listenMouseEventFromSocket()
             socketEventViewModel.listenApkFilePushEvent()
+            socketEventViewModel.listenSocketStatus()
 
             // 开启自动触摸服务
             startSystemAutoTouchService()
         }
 
         override fun onLost(network: Network) {
+            Log.d(TAG, "ConnectivityManager.NetworkCallback-onLost")
+
             socketEventViewModel.disconnect()
             // 停止自动触摸服务
             stopSystemAutoTouchService()
@@ -59,22 +68,28 @@ class SocketEventService: Service() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
+
+        Log.d(TAG, "onCreate")
+
         val networkRequest: NetworkRequest = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        Log.d(TAG, "registerNetworkCallback")
 
         val handler = CoroutineExceptionHandler { _, exception ->
             println("Caught $exception")
         }
 
         capturedImageJob = GlobalScope.launch(handler) {
+            Log.d(TAG, "recordViewModel.capturedImage")
             recordViewModel.capturedImage.collect {
                 socketEventViewModel.sendBitmapToServer(it)
             }
         }
 
         apkEventJob = GlobalScope.launch {
+            Log.d(TAG, "socketEventViewModel.apkFilePushEventFlow.collect")
             socketEventViewModel.apkFilePushEventFlow.collect {
                 Log.d("CastService", "collect ApkEvent: $it")
                 it?.let {
@@ -84,8 +99,8 @@ class SocketEventService: Service() {
         }
 
         apkDownloadJob = GlobalScope.launch {
+            Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
             downloaderViewModel.fileDownloadStateFlow.collect {
-                Log.d("CastService", "start install : $it")
                 val helper = PackageManagerHelper(applicationContext)
                 helper.registerListener { actionType, success ->
                     if (actionType == PackageManagerHelper.ACTION_TYPE_INSTALL) {
@@ -95,10 +110,9 @@ class SocketEventService: Service() {
                             Toast.makeText(applicationContext, "install apk failed", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    Log.d("CastService", "install apk success: $success")
+                    Log.d(TAG, "install apk success: $success")
                 }
                 helper.installPackage(it)
-                Toast.makeText(applicationContext, "start install : $it", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -118,6 +132,8 @@ class SocketEventService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand")
+
         socketEventViewModel.connectIfNeed()
         socketEventViewModel.listenMouseEventFromSocket()
         socketEventViewModel.listenApkFilePushEvent()
@@ -127,6 +143,8 @@ class SocketEventService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "onDestroy")
+
         connectivityManager.unregisterNetworkCallback(networkCallback)
 
         stopSystemAutoTouchService()

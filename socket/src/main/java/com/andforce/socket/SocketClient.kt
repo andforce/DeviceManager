@@ -6,12 +6,20 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import org.json.JSONObject
 
-class SocketClient(url: String) {
+class SocketClient(private val url: String) {
     private var socket: Socket? = null
 
     private var mouseEventListener: MouseEventListener? = null
     private var apkEventListener: ApkEventListener? = null
+    private var socketStatusListener: SocketStatusListener? = null
 
+    fun registerSocketStatusListener(listener: SocketStatusListener) {
+        this.socketStatusListener = listener
+    }
+
+    fun unregisterSocketStatusListener() {
+        this.socketStatusListener = null
+    }
     fun registerMouseEventListener(listener: MouseEventListener) {
         mouseEventListener = listener
     }
@@ -26,29 +34,37 @@ class SocketClient(url: String) {
         apkEventListener = null
     }
 
-    init {
-        try {
-            socket = IO.socket(url)
-        } catch (e: Exception) {
-            Log.e("SocketClient", e.toString())
-        }
-    }
-
     fun isConnected(): Boolean {
         return socket?.connected() == true
     }
 
     fun startConnection() {
+
+        if (isConnected()) {
+            return
+        }
+        socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECTING)
+
+        try {
+            socket = IO.socket(url)
+        } catch (e: Exception) {
+            Log.e("SocketClient", e.toString())
+            socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECT_ERROR)
+        }
+
         socket?.on(Socket.EVENT_CONNECT, Emitter.Listener {
             Log.d("SocketClient", "connect")
+            socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECTED)
         })
 
         socket?.on(Socket.EVENT_DISCONNECT, Emitter.Listener {
             Log.d("SocketClient", "disconnect")
+            socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.DISCONNECTED)
         })
 
         socket?.on(Socket.EVENT_CONNECT_ERROR, Emitter.Listener {
             Log.d("SocketClient", "connect error")
+            socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECT_ERROR)
         })
 
         socket?.on("event", Emitter.Listener { args ->

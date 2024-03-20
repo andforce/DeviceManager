@@ -1,6 +1,7 @@
 package com.andforce.device.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.andforce.commonutils.ScreenUtils
@@ -23,10 +24,11 @@ class AutoTouchService : AccessibilityService() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
+        AutoTouchManager.isAccessibility = true
 
         socketEventJob = GlobalScope.launch {
 
-            socketEventViewModel.eventFlow.buffer(capacity = 1024).collect {
+            socketEventViewModel.mouseEventFlow.buffer(capacity = 1024).collect {
 
                 it?.let {
                     Log.d("AutoTouchService", "collect MouseEvent: $it")
@@ -58,6 +60,12 @@ class AutoTouchService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         socketEventJob?.cancel()
+        AutoTouchManager.isAccessibility = false
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        AutoTouchManager.isAccessibility = true
+        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {

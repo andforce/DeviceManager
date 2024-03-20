@@ -20,12 +20,17 @@
         android:layout_height="wrap_content"
         android:text="Unknown" />
 
-    <CheckBox
-        android:checked="false"
+    <TextView
+        android:id="@+id/socket_status"
+        android:text="Socket:UNKNOWN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
         android:id="@+id/checkbox_remote_control"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="启动Socket服务" />
+        android:text="启动Socket" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
