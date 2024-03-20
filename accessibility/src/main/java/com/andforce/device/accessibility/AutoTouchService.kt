@@ -1,10 +1,10 @@
-package com.andforce.device.manager.autotouch
+package com.andforce.device.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.andforce.commonutils.ScreenUtils
 import com.andforce.injectevent.InjectEventHelper
-import com.andforce.device.manager.utils.ScreenUtils
 import com.andforce.socket.SocketViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope

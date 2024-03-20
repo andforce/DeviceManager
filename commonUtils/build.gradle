@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    namespace 'com.andforce.device.accessibility'
-    compileSdk 34
+    namespace 'com.andforce.commonutils'
+    compileSdk 33
 
     defaultConfig {
         minSdk 28
@@ -31,30 +31,9 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-
-    // 引入协程
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-
-    // 引入LiveData、Flow
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
-
-    // Koin for Android
-    implementation "io.insert-koin:koin-core:3.5.0"
-    implementation 'io.insert-koin:koin-android:3.5.0'
-
-    implementation project(path: ':commonUtils')
-    implementation project(path: ':injectEvent')
-    implementation project(path: ':socket')
-
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

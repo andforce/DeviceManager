@@ -1,4 +1,4 @@
-package com.andforce.device.manager.utils
+package com.andforce.commonutils
 
 import android.content.Context
 import android.util.DisplayMetrics

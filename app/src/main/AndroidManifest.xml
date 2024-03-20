@@ -41,7 +41,7 @@
         </service>
 
         <service
-            android:name=".autotouch.AutoTouchService"
+            android:name="com.andforce.device.accessibility.AutoTouchService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
             <intent-filter>

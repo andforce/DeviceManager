@@ -78,6 +78,7 @@ dependencies {
     implementation "io.insert-koin:koin-core:3.5.0"
     implementation 'io.insert-koin:koin-android:3.5.0'
 
+    implementation project(path: ':commonUtils')
     implementation project(path: ':screenCast')
     implementation project(path: ':socket')
     implementation project(path: ':network')
