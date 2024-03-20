@@ -27,7 +27,7 @@ import org.koin.android.ext.android.inject
 import java.io.ByteArrayOutputStream
 
 
-class CastService: Service() {
+class ScreenCastService: Service() {
     private var mpm: MediaProjectionManager? = null
     private val viewModel: RecordViewModel by inject()
     private val socketViewModel: SocketViewModel by inject()
@@ -38,7 +38,7 @@ class CastService: Service() {
         const val NOTIFICATION_ID = 1
         // 启动方法
         fun startService(context: Context, isForeground: Boolean, data: Intent, code: Int) {
-            val startIntent = Intent(context.applicationContext, CastService::class.java)
+            val startIntent = Intent(context.applicationContext, ScreenCastService::class.java)
             startIntent.putExtra("data", data)
             startIntent.putExtra("code", code)
             if (isForeground) {

@@ -82,7 +82,7 @@ class MediaProjectionSocketActivity : AppCompatActivity() {
         viewModel.result.observe(this) {
             when (it) {
                 is MediaProjectionViewModel.Result.Success -> {
-                    CastService.startService(this, false, it.data, it.resultCode)
+                    ScreenCastService.startService(this, false, it.data, it.resultCode)
                 }
                 MediaProjectionViewModel.Result.PermissionDenied -> {
                     Toast.makeText(this, "User did not grant permission", Toast.LENGTH_SHORT).show()
