@@ -1,5 +1,6 @@
 package com.andforce.screen.cast
 
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,6 +8,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.IBinder
 import android.util.Log
@@ -17,6 +19,8 @@ import org.koin.android.ext.android.inject
 
 class ScreenCastService: Service() {
     private var mpm: MediaProjectionManager? = null
+    private var mp: MediaProjection? = null
+
     private val recordViewModel: RecordViewModel by inject()
 
     companion object {
@@ -49,38 +53,46 @@ class ScreenCastService: Service() {
         mpm = applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy")
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-
-        return null
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        Log.d(TAG, "onStartCommand")
-
         if (intent == null) {
+            Log.d(TAG, "onStartCommand, intent is null, return")
             return START_STICKY
         }
 
         // 获取intent中的数据
         val data = intent.getParcelableExtra<Intent>("data")
         val code = intent.getIntExtra("code", 0)
-        if (data == null || code == 0) {
-            Toast.makeText(this, "data or code is null", Toast.LENGTH_SHORT).show()
+        if (data == null || code != Activity.RESULT_OK) {
+            Log.d(TAG, "onStartCommand, data == null, code != Activity.RESULT_OK")
             return START_NOT_STICKY
         }
 
-        mpm?.getMediaProjection(code, data)?.let { mp ->
-            recordViewModel.startCaptureImages(this, mp, 0.35f)
+        if (mpm == null) {
+            Log.d(TAG, "onStartCommand, mpm is null")
+            return START_NOT_STICKY
+        } else {
+            Log.d(TAG, "onStartCommand, code:$code, data:$data")
+
+            val mediaProjection = mpm!!.getMediaProjection(code, data)
+            mp = mediaProjection
+            if (mediaProjection == null) {
+                Log.d(TAG, "onStartCommand, mediaProjection is null")
+            } else {
+                recordViewModel.startCaptureImages(this, mediaProjection, 0.35f)
+                Log.d(TAG, "onStartCommand, mediaProjection is $mediaProjection")
+            }
         }
 
         return START_STICKY
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+        mp?.stop()
+    }
+
     private fun createNotification(): Notification {
         val builder: Notification.Builder = Notification.Builder(this,
             createNotificationChannel("my_service", "My Background Service"))
@@ -101,4 +113,6 @@ class ScreenCastService: Service() {
         service.createNotificationChannel(chan)
         return channelId
     }
+
+    override fun onBind(intent: Intent?) = null
 }

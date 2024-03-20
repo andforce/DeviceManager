@@ -5,6 +5,7 @@ import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
 import android.media.projection.MediaProjection
+import android.os.SystemClock
 
 class VirtualDisplayImageReader(
     private val mediaProjection: MediaProjection
@@ -25,7 +26,7 @@ class VirtualDisplayImageReader(
         val flags =
             DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY or DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC
         mediaProjection.createVirtualDisplay(
-            "$TAG-display",
+            "$TAG-${SystemClock.uptimeMillis()}-display",
             width, height, dpi, flags,
             imageReader!!.surface,
             object : VirtualDisplay.Callback() {
