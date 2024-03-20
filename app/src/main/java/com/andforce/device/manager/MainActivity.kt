@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.andforce.device.manager.databinding.MediaprojectionActivityMainBinding
+import com.andforce.device.manager.databinding.ActivityMainBinding
 import com.andforce.socket.MouseEvent
 import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
@@ -23,18 +23,18 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 
-class MediaProjectionSocketActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val viewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MediaProjectionViewModel(this@MediaProjectionSocketActivity) as T
+                return MediaProjectionViewModel(this@MainActivity) as T
             }
         })[MediaProjectionViewModel::class.java]
     }
 
     private val viewMainBinding by lazy {
-        MediaprojectionActivityMainBinding.inflate(layoutInflater)
+        ActivityMainBinding.inflate(layoutInflater)
     }
 
     private val recordViewModel: RecordViewModel by inject()
