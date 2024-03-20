@@ -10,7 +10,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.plugindemo"
+        applicationId "com.andforce.device.manager"
         minSdk 28
         //noinspection ExpiredTargetSdkVersion,OldTargetApi
         targetSdk 28

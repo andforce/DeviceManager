@@ -1,4 +1,4 @@
-package com.andforce.device.manager
+package com.andforce.screen.cast
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -159,7 +159,7 @@ class ScreenCastService: Service() {
             createNotificationChannel("my_service", "My Background Service"))
         builder.setContentTitle("Recording Screen")
             .setContentText("Recording in progress")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
         return builder.build()
     }
 

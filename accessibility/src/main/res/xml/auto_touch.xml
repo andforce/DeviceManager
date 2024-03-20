@@ -5,7 +5,7 @@
     android:canRequestFilterKeyEvents="true"
     android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
     android:accessibilityFeedbackType="feedbackAllMask"
-    android:packageNames="com.example.plugindemo"
+    android:packageNames="com.andforce.device.manager"
     android:notificationTimeout="100"
     android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"/>

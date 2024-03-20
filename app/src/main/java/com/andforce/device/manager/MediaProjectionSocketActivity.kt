@@ -15,6 +15,8 @@ import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
+import com.andforce.screen.cast.MediaProjectionViewModel
+import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.socket.SocketViewModel
 import kotlinx.coroutines.launch
@@ -42,6 +44,9 @@ class MediaProjectionSocketActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewMainBinding.root)
+
+//        val daemon = Intent(this, DaemonActivity::class.java)
+//        startActivity(daemon)
 
         val adapter = InstalledAppAdapter(this.applicationContext)
         viewMainBinding.rvList.layoutManager = LinearLayoutManager(this)

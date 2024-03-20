@@ -24,6 +24,7 @@
         android:theme="@style/AppTheme" >
 
         <activity android:name=".MediaProjectionSocketActivity"
+            android:excludeFromRecents="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,29 +32,6 @@
             </intent-filter>
         </activity>
 
-
-        <service
-            android:directBootAware="true"
-            android:name=".ScreenCastService"
-            android:exported="false"
-            android:foregroundServiceType="mediaProjection">
-            <intent-filter>
-                <action android:name="com.cry.mediaprojectiondemo.CastService" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:directBootAware="true"
-            android:name="com.andforce.device.accessibility.AutoTouchService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/auto_touch" />
-        </service>
 
     </application>
 

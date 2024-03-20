@@ -1,4 +1,4 @@
-package com.andforce.device.manager
+package com.andforce.screen.cast
 
 import android.app.Activity
 import android.content.Intent

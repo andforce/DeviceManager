@@ -1,0 +1,11 @@
+<resources>
+
+    <!-- 设置1像素主题-->
+    <style name="DaemonTheme" parent="@android:style/Theme.Holo.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>

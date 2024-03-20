@@ -1,2 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.andforce.screen.cast" />
+    package="com.andforce.screen.cast" >
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application>
+        <service
+            android:name=".ScreenCastService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection">
+        </service>
+    </application>
+</manifest>

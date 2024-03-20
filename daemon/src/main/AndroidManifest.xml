@@ -22,6 +22,15 @@
                 <action android:name="com.andforce.daemon.DaemonService" />
             </intent-filter>
         </service>
+
+        <activity
+            android:excludeFromRecents="true"
+            android:enabled="true"
+            android:exported="false"
+            android:name=".DaemonActivity"
+            android:theme="@style/DaemonTheme">
+
+        </activity>
     </application>
 
 </manifest>
