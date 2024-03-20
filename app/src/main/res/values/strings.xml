@@ -1,4 +1,3 @@
 <resources>
     <string name="app_name">端控</string>
-    <string name="auto_touch_service_des">AutoTouchService</string>
 </resources>
