@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class SocketEventRepository {
 
-    suspend fun listenEvent(socketClient: SocketClient): Flow<MouseEvent> = callbackFlow {
+    suspend fun listenMouseEventFromSocket(socketClient: SocketClient): Flow<MouseEvent> = callbackFlow {
         val listener = object : MouseEventListener {
             override fun onDown(mouseEvent: MouseEvent) {
                 trySend(mouseEvent)
@@ -27,7 +27,7 @@ class SocketEventRepository {
         }
     }
 
-    suspend fun listenApkEvent(socketClient: SocketClient): Flow<ApkEvent> = callbackFlow {
+    suspend fun listenApkFilePushEvent(socketClient: SocketClient): Flow<ApkEvent> = callbackFlow {
         val listener = object : ApkEventListener {
             override fun onApk(apkName: ApkEvent) {
                 trySend(apkName)

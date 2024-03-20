@@ -102,14 +102,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewMainBinding.btnTest.setOnClickListener {
-            Toast.makeText(this, "收到点击事件了", Toast.LENGTH_SHORT).show()
-        }
-
-        viewMainBinding.btnSocketService.setOnClickListener {
+        viewMainBinding.checkboxRemoteControl.setOnCheckedChangeListener { buttonView, isChecked ->
             val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
-            intent.putExtra("socketUrl", "http://192.168.2.183:3001")
-            startService(intent)
+            if (isChecked) {
+                startService(intent)
+            }
         }
 
         lifecycleScope.launch {

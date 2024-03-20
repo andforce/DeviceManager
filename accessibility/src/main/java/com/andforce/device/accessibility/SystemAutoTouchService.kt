@@ -1,7 +1,6 @@
 package com.andforce.device.accessibility
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
@@ -21,17 +20,6 @@ class SystemAutoTouchService: Service() {
     private var socketEventJob: Job? = null
 
     private val injectEventHelper = InjectEventHelper.getInstance()
-    companion object {
-        fun start(context: Context) {
-            val intent = Intent(context, SystemAutoTouchService::class.java)
-            context.startService(intent)
-        }
-
-        fun stop(context: Context) {
-            val intent = Intent(context, SystemAutoTouchService::class.java)
-            context.stopService(intent)
-        }
-    }
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
@@ -41,7 +29,7 @@ class SystemAutoTouchService: Service() {
             socketEventViewModel.eventFlow.buffer(capacity = 1024).collect {
 
                 it?.let {
-                    Log.d("AutoTouchService", "collect MouseEvent: $it")
+                    Log.i("SystemAutoTouchService", "collect MouseEvent: $it")
 
                     val screenW = ScreenUtils.metrics(this@SystemAutoTouchService).widthPixels
                     val screenH = ScreenUtils.metrics(this@SystemAutoTouchService).heightPixels

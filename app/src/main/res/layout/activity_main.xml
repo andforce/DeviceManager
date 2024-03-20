@@ -12,7 +12,7 @@
         android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="start" />
+        android:text="开始投屏" />
 
     <TextView
         android:id="@+id/tv_info"
@@ -20,14 +20,9 @@
         android:layout_height="wrap_content"
         android:text="Unknown" />
 
-    <Button
-        android:id="@+id/btn_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="从网页点" />
-
-    <Button
-        android:id="@+id/btn_socket_service"
+    <CheckBox
+        android:checked="false"
+        android:id="@+id/checkbox_remote_control"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="启动Socket服务" />

@@ -7,7 +7,7 @@
     <application>
         <service android:name=".SocketEventService">
             <intent-filter>
-                <action android:name="com.andforce.socket.SocketService" />
+                <action android:name="com.andforce.socket.SocketEventService" />
             </intent-filter>
         </service>
     </application>
