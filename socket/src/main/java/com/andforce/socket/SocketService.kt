@@ -48,10 +48,11 @@ class SocketService: Service() {
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             // 网络可用时调用
-            connectIfNeed()
-            socketClient?.let {
-                socketViewModel.listenEvent(it)
-                socketViewModel.listenApkEvent(it)
+            connectIfNeed().also {
+                socketClient?.let {
+                    socketViewModel.listenEvent(it)
+                    socketViewModel.listenApkEvent(it)
+                }
             }
         }
 
@@ -158,7 +159,12 @@ class SocketService: Service() {
             val socketUrl = intent.getStringExtra("socketUrl")
             this.socketUrl = socketUrl
 
-            connectIfNeed()
+            connectIfNeed().also {
+                socketClient?.let {
+                    socketViewModel.listenEvent(it)
+                    socketViewModel.listenApkEvent(it)
+                }
+            }
         }
         return START_STICKY
     }
