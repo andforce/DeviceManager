@@ -4,7 +4,7 @@ import android.app.Application
 import com.andforce.network.NetworkViewModel
 import com.andforce.device.manager.apps.PackageManagerViewModel
 import com.andforce.device.manager.socket.SocketViewModel
-import com.cry.screenop.coroutine.RecordViewModel
+import com.andforce.screen.cast.coroutine.RecordViewModel
 import kotlinx.coroutines.MainScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin

@@ -30,7 +30,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "DeviceManager"
 include ':app'
-include ':screenop'
+include ':screenCast'
 include ':socket'
 include ':network'
 include ':injectEvent'
+include ':packageManager'

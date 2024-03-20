@@ -15,8 +15,8 @@ import android.widget.Toast
 import com.andforce.network.NetworkViewModel
 import com.andforce.socket.SocketClient
 import com.andforce.device.manager.socket.SocketViewModel
-import com.cry.screenop.coroutine.RecordViewModel
-import com.example.plugindemo.installapk.PackageManagerHelper
+import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.device.packagemanager.PackageManagerHelper
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

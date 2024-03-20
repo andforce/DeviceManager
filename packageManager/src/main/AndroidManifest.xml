@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- 安装应用的权限（8.0及以上会需要用户手动打开允许安装未知应用的权限，但在provider_paths的配置路径里，可以配置不需要用户手动打开权限，也可跳转自动安装）-->
+    <uses-permission
+        android:name="android.permission.REQUEST_INSTALL_PACKAGES"
+        tools:ignore="ProtectedPermissions" />
+    <!--应用卸载权限-->
+    <uses-permission android:name="permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission
+        android:name="android.permission.DELETE_PACKAGES"
+        tools:ignore="ProtectedPermissions" />
+</manifest>

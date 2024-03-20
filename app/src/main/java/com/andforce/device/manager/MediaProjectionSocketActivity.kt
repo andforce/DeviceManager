@@ -16,7 +16,7 @@ import com.andforce.device.manager.apps.InstalledAppAdapter
 import com.andforce.device.manager.apps.OnUninstallClickListener
 import com.andforce.device.manager.apps.PackageManagerViewModel
 import com.andforce.device.manager.socket.SocketViewModel
-import com.cry.screenop.coroutine.RecordViewModel
+import com.andforce.screen.cast.coroutine.RecordViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 

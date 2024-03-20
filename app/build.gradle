@@ -77,10 +77,11 @@ dependencies {
     // Koin for Android
     implementation "io.insert-koin:koin-core:3.5.0"
     implementation 'io.insert-koin:koin-android:3.5.0'
-    implementation project(path: ':screenop')
+    implementation project(path: ':screenCast')
     implementation project(path: ':socket')
     implementation project(path: ':network')
     implementation project(path: ':injectEvent')
+    implementation project(path: ':packageManager')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

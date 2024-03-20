@@ -1,7 +1,7 @@
 package com.andforce.device.manager.apps
 
 import android.content.Context
-import com.example.plugindemo.installapk.PackageManagerHelper
+import com.andforce.device.packagemanager.PackageManagerHelper
 
 class PackageManagerRepository {
     fun loadInstalledApps(context: Context): List<AppBean> {
