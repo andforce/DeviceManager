@@ -1,9 +1,9 @@
-package com.cry.mediaprojectiondemo
+package com.andforce.device.manager
 
 import android.app.Application
 import com.andforce.network.NetworkViewModel
-import com.cry.mediaprojectiondemo.apps.PackageManagerViewModel
-import com.cry.mediaprojectiondemo.socket.SocketViewModel
+import com.andforce.device.manager.apps.PackageManagerViewModel
+import com.andforce.device.manager.socket.SocketViewModel
 import com.cry.screenop.coroutine.RecordViewModel
 import kotlinx.coroutines.MainScope
 import org.koin.android.ext.koin.androidContext

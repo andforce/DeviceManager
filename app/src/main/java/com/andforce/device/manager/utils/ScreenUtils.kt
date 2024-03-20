@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo.utils
+package com.andforce.device.manager.utils
 
 import android.content.Context
 import android.util.DisplayMetrics
@@ -15,7 +15,7 @@ object ScreenUtils {
             return metrics
         }
 
-        if (!::windowManager.isInitialized) {
+        if (!ScreenUtils::windowManager.isInitialized) {
             windowManager =
                 context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             isInitialized = true

@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo.apps
+package com.andforce.device.manager.apps
 
 import android.content.Context
 import android.graphics.drawable.Drawable

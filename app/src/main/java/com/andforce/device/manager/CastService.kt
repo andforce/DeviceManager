@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo
+package com.andforce.device.manager
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,10 +12,9 @@ import android.media.projection.MediaProjectionManager
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-import com.andforce.device.manager.R
 import com.andforce.network.NetworkViewModel
 import com.andforce.socket.SocketClient
-import com.cry.mediaprojectiondemo.socket.SocketViewModel
+import com.andforce.device.manager.socket.SocketViewModel
 import com.cry.screenop.coroutine.RecordViewModel
 import com.example.plugindemo.installapk.PackageManagerHelper
 import kotlinx.coroutines.CoroutineExceptionHandler

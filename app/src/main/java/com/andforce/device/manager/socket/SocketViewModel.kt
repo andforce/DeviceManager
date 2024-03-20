@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo.socket
+package com.andforce.device.manager.socket
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

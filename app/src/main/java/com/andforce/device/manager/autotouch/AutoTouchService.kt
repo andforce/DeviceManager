@@ -1,11 +1,11 @@
-package com.cry.mediaprojectiondemo.autotouch
+package com.andforce.device.manager.autotouch
 
 import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.andforce.injectevent.InjectEventHelper
-import com.cry.mediaprojectiondemo.socket.SocketViewModel
-import com.cry.mediaprojectiondemo.utils.ScreenUtils
+import com.andforce.device.manager.socket.SocketViewModel
+import com.andforce.device.manager.utils.ScreenUtils
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job

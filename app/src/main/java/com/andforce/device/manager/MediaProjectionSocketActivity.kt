@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo
+package com.andforce.device.manager
 
 import android.os.Bundle
 import android.util.Log
@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andforce.device.manager.databinding.MediaprojectionActivityMainBinding
 import com.andforce.socket.MouseEvent
-import com.cry.mediaprojectiondemo.apps.AppBean
-import com.cry.mediaprojectiondemo.apps.InstalledAppAdapter
-import com.cry.mediaprojectiondemo.apps.OnUninstallClickListener
-import com.cry.mediaprojectiondemo.apps.PackageManagerViewModel
-import com.cry.mediaprojectiondemo.socket.SocketViewModel
+import com.andforce.device.manager.apps.AppBean
+import com.andforce.device.manager.apps.InstalledAppAdapter
+import com.andforce.device.manager.apps.OnUninstallClickListener
+import com.andforce.device.manager.apps.PackageManagerViewModel
+import com.andforce.device.manager.socket.SocketViewModel
 import com.cry.screenop.coroutine.RecordViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject

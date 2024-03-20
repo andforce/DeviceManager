@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo.socket
+package com.andforce.device.manager.socket
 
 import com.andforce.socket.ApkEvent
 import com.andforce.socket.ApkEventListener

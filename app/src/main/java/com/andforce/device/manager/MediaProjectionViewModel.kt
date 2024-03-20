@@ -1,4 +1,4 @@
-package com.cry.mediaprojectiondemo
+package com.andforce.device.manager
 
 import android.app.Activity
 import android.content.Intent
