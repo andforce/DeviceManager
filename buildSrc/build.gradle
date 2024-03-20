@@ -1,0 +1,31 @@
+apply plugin: 'groovy'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
+dependencies {
+    implementation 'com.android.tools.build:gradle:8.1.4'
+    implementation gradleApi() //gradle sdk
+    implementation localGroovy() //groovy sdk
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+repositories {
+    mavenCentral()
+    google()
+}

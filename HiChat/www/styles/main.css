@@ -1,0 +1,19 @@
+html, body {
+    margin: 0;
+    background-color: #efefef;
+    font-family: sans-serif;
+}
+.wrapper {
+    padding: 5px;
+    margin: 0 auto;
+}
+
+#colorStyle {
+    width: 50px;
+    border: none;
+    padding: 0;
+}
+
+footer {
+    text-align: center;
+}
