@@ -1,4 +1,4 @@
-package com.andforce.device.manager.apps
+package com.andforce.device.packagemanager.apps
 
 import android.content.Context
 import android.graphics.drawable.Drawable

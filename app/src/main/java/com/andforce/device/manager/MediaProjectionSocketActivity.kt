@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andforce.device.manager.databinding.MediaprojectionActivityMainBinding
 import com.andforce.socket.MouseEvent
-import com.andforce.device.manager.apps.AppBean
-import com.andforce.device.manager.apps.InstalledAppAdapter
-import com.andforce.device.manager.apps.OnUninstallClickListener
-import com.andforce.device.manager.apps.PackageManagerViewModel
+import com.andforce.device.packagemanager.apps.AppBean
+import com.andforce.device.packagemanager.apps.InstalledAppAdapter
+import com.andforce.device.packagemanager.apps.OnUninstallClickListener
+import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.device.manager.socket.SocketViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import kotlinx.coroutines.launch

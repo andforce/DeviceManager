@@ -1,7 +1,8 @@
-package com.andforce.device.manager.apps
+package com.andforce.device.packagemanager.apps
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.andforce.device.manager.R
+import com.andforce.device.packagemanager.R
 
 class InstalledAppAdapter(val context: Context): RecyclerView.Adapter<InstalledAppViewHolder>() {
 
@@ -41,7 +42,7 @@ class InstalledAppAdapter(val context: Context): RecyclerView.Adapter<InstalledA
         appIcon.setImageDrawable(appBean.icon)
         val appName = holder.itemView.findViewById<TextView>(R.id.tv_app_name)
         appName.text = appBean.appName
-        appName.setTextColor(if (appBean.isSystem) context.resources.getColor(R.color.colorAccent) else context.resources.getColor(R.color.colorPrimary))
+        appName.setTextColor(if (appBean.isSystem) Color.RED else Color.GREEN)
 
         val pkgName = holder.itemView.findViewById<TextView>(R.id.tv_app_package_name)
         pkgName.text = appBean.packageName
