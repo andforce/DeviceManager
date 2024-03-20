@@ -1,10 +1,5 @@
-package com.andforce.device.manager.socket
+package com.andforce.socket
 
-import com.andforce.socket.ApkEvent
-import com.andforce.socket.ApkEventListener
-import com.andforce.socket.MouseEvent
-import com.andforce.socket.MouseEventListener
-import com.andforce.socket.SocketClient
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

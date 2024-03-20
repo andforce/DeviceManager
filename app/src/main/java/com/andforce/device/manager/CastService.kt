@@ -14,9 +14,9 @@ import android.util.Log
 import android.widget.Toast
 import com.andforce.network.NetworkViewModel
 import com.andforce.socket.SocketClient
-import com.andforce.device.manager.socket.SocketViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.device.packagemanager.PackageManagerHelper
+import com.andforce.socket.SocketViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

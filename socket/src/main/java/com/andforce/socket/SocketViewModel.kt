@@ -1,10 +1,7 @@
-package com.andforce.device.manager.socket
+package com.andforce.socket
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andforce.socket.ApkEvent
-import com.andforce.socket.MouseEvent
-import com.andforce.socket.SocketClient
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.buffer

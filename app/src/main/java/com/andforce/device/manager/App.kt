@@ -3,8 +3,8 @@ package com.andforce.device.manager
 import android.app.Application
 import com.andforce.network.NetworkViewModel
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
-import com.andforce.device.manager.socket.SocketViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.socket.SocketViewModel
 import kotlinx.coroutines.MainScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin

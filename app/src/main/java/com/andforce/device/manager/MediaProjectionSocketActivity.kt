@@ -15,8 +15,8 @@ import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
-import com.andforce.device.manager.socket.SocketViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.socket.SocketViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
