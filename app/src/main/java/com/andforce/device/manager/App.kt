@@ -4,7 +4,7 @@ import android.app.Application
 import com.andforce.network.NetworkViewModel
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
-import com.andforce.socket.SocketViewModel
+import com.andforce.socket.SocketEventViewModel
 import kotlinx.coroutines.MainScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -19,7 +19,7 @@ class App : Application() {
         val myModule = module {
             // 将 MyViewModel 定义为全局单例
             single { RecordViewModel(MainScope()) }
-            single { SocketViewModel() }
+            single { SocketEventViewModel() }
             single { PackageManagerViewModel() }
             single { NetworkViewModel() }
         }

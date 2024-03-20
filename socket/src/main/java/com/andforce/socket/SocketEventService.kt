@@ -22,9 +22,9 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.io.ByteArrayOutputStream
 
-class SocketService: Service() {
+class SocketEventService: Service() {
 
-    private val socketViewModel: SocketViewModel by inject()
+    private val socketEventViewModel: SocketEventViewModel by inject()
     private val downloaderViewModel: NetworkViewModel by inject()
     private val recordViewModel: RecordViewModel by inject()
 
@@ -50,8 +50,8 @@ class SocketService: Service() {
             // 网络可用时调用
             connectIfNeed().also {
                 socketClient?.let {
-                    socketViewModel.listenEvent(it)
-                    socketViewModel.listenApkEvent(it)
+                    socketEventViewModel.listenEvent(it)
+                    socketEventViewModel.listenApkEvent(it)
                 }
             }
         }
@@ -104,7 +104,7 @@ class SocketService: Service() {
         }
 
         apkEventJob = mainScope.launch {
-            socketViewModel.apkEventFlow.collect {
+            socketEventViewModel.apkEventFlow.collect {
                 Log.d("CastService", "collect ApkEvent: $it")
                 it?.let {
                     downloaderViewModel.downloadApk(applicationContext, it.name, it.path)
@@ -147,11 +147,27 @@ class SocketService: Service() {
         if (isNetworkAvailable()) {
             socketClient?.startConnection()
         }
+        startSystemAutoTouchService()
+    }
+
+    private fun startSystemAutoTouchService() {
+        val intent = Intent()
+        intent.action = "com.andforce.SystemAutoTouchService"
+        intent.`package` = packageName
+        startService(intent)
+    }
+
+    private fun stopSystemAutoTouchService() {
+        val intent = Intent()
+        intent.action = "com.andforce.SystemAutoTouchService"
+        intent.`package` = packageName
+        stopService(intent)
     }
 
     private fun disconnect() {
         socketClient?.release()
         socketClient = null
+        stopSystemAutoTouchService()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -161,13 +177,14 @@ class SocketService: Service() {
 
             connectIfNeed().also {
                 socketClient?.let {
-                    socketViewModel.listenEvent(it)
-                    socketViewModel.listenApkEvent(it)
+                    socketEventViewModel.listenEvent(it)
+                    socketEventViewModel.listenApkEvent(it)
                 }
             }
         }
         return START_STICKY
     }
+
     override fun onDestroy() {
         super.onDestroy()
         connectivityManager.unregisterNetworkCallback(networkCallback)

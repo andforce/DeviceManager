@@ -26,7 +26,7 @@ class NetworkViewModel : ViewModel() {
         .build()
     private val retrofit = Retrofit.Builder()
         //.addConverterFactory(ScalareConverterFactory.create())
-        .baseUrl("http://10.66.32.51:3001") // replace with your base url
+        .baseUrl("http://192.168.2.183:3001") // replace with your base url
         // 使用OKHttp下载
         .client(client)
         .build()

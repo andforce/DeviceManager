@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SocketViewModel : ViewModel() {
-    private val socketRepository = SocketRepository()
+class SocketEventViewModel : ViewModel() {
+    private val socketEventRepository = SocketEventRepository()
 
     private val _apkEventFlow = MutableSharedFlow<ApkEvent?>(replay = 0)
     var apkEventFlow: SharedFlow<ApkEvent?> = _apkEventFlow
@@ -20,7 +20,7 @@ class SocketViewModel : ViewModel() {
 
     fun listenEvent(socketClient: SocketClient) {
         viewModelScope.launch {
-            socketRepository.listenEvent(socketClient).buffer(1024).collect {
+            socketEventRepository.listenEvent(socketClient).buffer(1024).collect {
                 _eventFlow.emit(it)
             }
         }
@@ -28,7 +28,7 @@ class SocketViewModel : ViewModel() {
 
     fun listenApkEvent(socketClient: SocketClient) {
         viewModelScope.launch {
-            socketRepository.listenApkEvent(socketClient).buffer(1024).collectLatest {
+            socketEventRepository.listenApkEvent(socketClient).buffer(1024).collectLatest {
                 _apkEventFlow.emit(it)
             }
         }

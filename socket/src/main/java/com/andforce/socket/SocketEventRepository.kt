@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 
-class SocketRepository {
+class SocketEventRepository {
 
     suspend fun listenEvent(socketClient: SocketClient): Flow<MouseEvent> = callbackFlow {
         val listener = object : MouseEventListener {

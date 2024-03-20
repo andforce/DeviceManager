@@ -18,7 +18,7 @@ import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.screen.cast.MediaProjectionViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
-import com.andforce.socket.SocketViewModel
+import com.andforce.socket.SocketEventViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val recordViewModel: RecordViewModel by inject()
-    private val socketViewModel: SocketViewModel by inject()
+    private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,13 +107,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewMainBinding.btnSocketService.setOnClickListener {
-            val intent = android.content.Intent(this, com.andforce.socket.SocketService::class.java)
-            intent.putExtra("socketUrl", "http://10.66.32.51:3001")
+            val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
+            intent.putExtra("socketUrl", "http://192.168.2.183:3001")
             startService(intent)
         }
 
         lifecycleScope.launch {
-            socketViewModel.eventFlow.collect {
+            socketEventViewModel.eventFlow.collect {
                 it?.let {
                     when (it) {
                         is MouseEvent.Down -> {

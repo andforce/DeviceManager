@@ -1,8 +1,10 @@
 package com.andforce.device.accessibility
 
-import android.accessibilityservice.AccessibilityService
+import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.os.IBinder
 import android.util.Log
-import android.view.accessibility.AccessibilityEvent
 import com.andforce.commonutils.ScreenUtils
 import com.andforce.injectevent.InjectEventHelper
 import com.andforce.socket.SocketEventViewModel
@@ -13,13 +15,23 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-class AutoTouchService : AccessibilityService() {
-
+class SystemAutoTouchService: Service() {
     private val socketEventViewModel: SocketEventViewModel by inject()
 
     private var socketEventJob: Job? = null
 
     private val injectEventHelper = InjectEventHelper.getInstance()
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, SystemAutoTouchService::class.java)
+            context.startService(intent)
+        }
+
+        fun stop(context: Context) {
+            val intent = Intent(context, SystemAutoTouchService::class.java)
+            context.stopService(intent)
+        }
+    }
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
@@ -31,8 +43,8 @@ class AutoTouchService : AccessibilityService() {
                 it?.let {
                     Log.d("AutoTouchService", "collect MouseEvent: $it")
 
-                    val screenW = ScreenUtils.metrics(this@AutoTouchService).widthPixels
-                    val screenH = ScreenUtils.metrics(this@AutoTouchService).heightPixels
+                    val screenW = ScreenUtils.metrics(this@SystemAutoTouchService).widthPixels
+                    val screenH = ScreenUtils.metrics(this@SystemAutoTouchService).heightPixels
 
                     val scaleW = screenW / it.remoteWidth.toFloat()
                     val scaleH = screenH / it.remoteHeight.toFloat()
@@ -41,13 +53,13 @@ class AutoTouchService : AccessibilityService() {
 
                     when (it) {
                         is com.andforce.socket.MouseEvent.Down -> {
-                            injectEventHelper.injectTouchDown(this@AutoTouchService,screenW,screenH,fromRealX,fromRealY)
+                            injectEventHelper.injectTouchDownSystem(fromRealX,fromRealY)
                         }
                         is com.andforce.socket.MouseEvent.Move -> {
-                            injectEventHelper.injectTouchMove(this@AutoTouchService,screenW,screenH,fromRealX,fromRealY)
+                            injectEventHelper.injectTouchMoveSystem(fromRealX,fromRealY)
                         }
                         is com.andforce.socket.MouseEvent.Up -> {
-                            injectEventHelper.injectTouchUp(this@AutoTouchService,screenW,screenH,fromRealX,fromRealY)
+                            injectEventHelper.injectTouchUpSystem(fromRealX,fromRealY)
                         }
                     }
                 }
@@ -55,16 +67,16 @@ class AutoTouchService : AccessibilityService() {
         }
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
     override fun onDestroy() {
         super.onDestroy()
         socketEventJob?.cancel()
     }
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        //Log.d("AutoTouchService", "onAccessibilityEvent: $event")
-    }
+    override fun onBind(intent: Intent?): IBinder? {
 
-    override fun onInterrupt() {
-        //Log.d("AutoTouchService", "onInterrupt")
+        return null
     }
 }
