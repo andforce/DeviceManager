@@ -18,6 +18,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
+/**
+ * 启动、关闭 ACTION_SOCKET_EVENT_SERVICE
+ */
 class SocketEventService: Service() {
 
     companion object {
@@ -59,11 +62,11 @@ class SocketEventService: Service() {
         }
     }
 
-    private fun isNetworkAvailable(): Boolean {
-        val network = connectivityManager.activeNetwork
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
-        return capabilities != null
-    }
+//    private fun isNetworkAvailable(): Boolean {
+//        val network = connectivityManager.activeNetwork
+//        val capabilities = connectivityManager.getNetworkCapabilities(network)
+//        return capabilities != null
+//    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {

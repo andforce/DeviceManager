@@ -35,10 +35,14 @@ app.post('/upload', (req, res) => {
             res.send('success');
             // 通过socket.io发送消息
             if (globalSocket) {
-                globalSocket.broadcast.emit('apk-upload', {
+                console.log('emit apk-upload event');
+                const apkInfo = new Object({
                     name: req.file.filename,
                     path: '/uploads/' + req.file.filename
                 });
+                globalSocket.broadcast.emit('apk-upload', apkInfo);
+            } else {
+                console.log('emit apk-upload event, error: no socket');
             }
         }
     });

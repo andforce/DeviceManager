@@ -19,7 +19,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
             Log.i(TAG, "start SocketEventService");
             Intent socketServiceIntent = new Intent();
             socketServiceIntent.setPackage(context.getPackageName());
-            socketServiceIntent.setAction("com.andforce.socket.SocketEventService");
+            socketServiceIntent.setAction("ACTION_SOCKET_EVENT_SERVICE");
             context.startService(socketServiceIntent);
         }
     }

@@ -1,5 +1,7 @@
 package com.andforce.device.manager
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
                 return MediaProjectionRequestViewModel(this@MainActivity) as T
             }
         })[MediaProjectionRequestViewModel::class.java]
@@ -43,12 +46,15 @@ class MainActivity : AppCompatActivity() {
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewMainBinding.root)
 
         // 启动Socket
-        val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
+        val intent = Intent("ACTION_SOCKET_EVENT_SERVICE").apply {
+            setPackage(packageName)
+        }
         startService(intent)
 
         val adapter = InstalledAppAdapter(this.applicationContext)
@@ -107,29 +113,45 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewMainBinding.btnSocket.setOnClickListener() {
-            val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
-            startService(intent)
+        viewMainBinding.btnSocket.setOnClickListener {
+            // 启动Socket
+            if (socketEventViewModel.socketStatusLiveData.value == SocketStatusListener.SocketStatus.DISCONNECTED) {
+                startService(intent)
+            } else {
+                stopService(intent)
+            }
         }
 
         socketEventViewModel.socketStatusLiveData.observe(this@MainActivity) {
             when(it) {
                 SocketStatusListener.SocketStatus.CONNECTING -> {
                     viewMainBinding.socketStatus.text = "Socket:CONNECTING"
-                    viewMainBinding.btnSocket.isEnabled = true
+                    viewMainBinding.btnSocket.apply {
+                        isEnabled = false
+                        text = "连接中..."
+                    }
                 }
                 SocketStatusListener.SocketStatus.CONNECTED -> {
                     viewMainBinding.socketStatus.text = "Socket:CONNECTED"
-                    viewMainBinding.btnSocket.isEnabled = false
+                    viewMainBinding.btnSocket.apply {
+                        isEnabled = true
+                        text = "断开Socket"
+                    }
                 }
 
                 SocketStatusListener.SocketStatus.DISCONNECTED-> {
                     viewMainBinding.socketStatus.text = "Socket:DISCONNECTED"
-                    viewMainBinding.btnSocket.isEnabled = true
+                    viewMainBinding.btnSocket.apply {
+                        isEnabled = true
+                        text = "连接Socket"
+                    }
                 }
                 SocketStatusListener.SocketStatus.CONNECT_ERROR-> {
                     viewMainBinding.socketStatus.text = "Socket:CONNECT_ERROR"
-                    viewMainBinding.btnSocket.isEnabled = true
+                    viewMainBinding.btnSocket.apply {
+                        isEnabled = true
+                        text = "重试Socket"
+                    }
                 }
             }
         }

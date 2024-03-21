@@ -24,6 +24,7 @@ class InstalledAppAdapter(val context: Context): RecyclerView.Adapter<InstalledA
     fun setData(data: List<AppBean>) {
         this.data.clear()
         this.data.addAll(data)
+        this.data.sortBy { it.isSystem }
         notifyDataSetChanged()
     }
 
@@ -47,6 +48,11 @@ class InstalledAppAdapter(val context: Context): RecyclerView.Adapter<InstalledA
         val pkgName = holder.itemView.findViewById<TextView>(R.id.tv_app_package_name)
         pkgName.text = appBean.packageName
         val button = holder.itemView.findViewById<Button>(R.id.btn_uninstall)
+        if (appBean.isSystem) {
+            button.visibility = View.GONE
+        } else {
+            button.visibility = View.VISIBLE
+        }
         button.setOnClickListener {
             listener?.onUninstallClick(appBean)
         }
