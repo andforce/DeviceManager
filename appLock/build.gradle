@@ -3,9 +3,11 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+apply plugin: 'com.andforce.smart.builder'
+
 android {
-    namespace 'com.andforce.socket'
-    compileSdk 34
+    namespace 'com.andforce.device.applock'
+    compileSdk 33
 
     defaultConfig {
         minSdk 28
@@ -35,11 +37,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
 
-    implementation('io.socket:socket.io-client:2.1.0') {
-        // excluding org.json which is provided by Android
-        exclude group: 'org.json', module: 'json'
-    }
-
     // 引入协程
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
@@ -52,11 +49,6 @@ dependencies {
     // Koin for Android
     implementation "io.insert-koin:koin-core:3.5.0"
     implementation 'io.insert-koin:koin-android:3.5.0'
-
-    implementation project(':network')
-    implementation project(':screenCast')
-    implementation project(':packageManager')
-    implementation project(':appLock')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

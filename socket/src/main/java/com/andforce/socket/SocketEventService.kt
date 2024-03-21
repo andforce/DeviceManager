@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.util.Log
 import android.widget.Toast
+import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.packagemanager.PackageManagerHelper
 import com.andforce.network.NetworkViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
@@ -71,6 +72,23 @@ class SocketEventService: Service() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
+
+        AppLauncherManager.startListener(object : AppLauncherManager.Action {
+            override fun allowLaunch(intent: Intent, pkg: String): Boolean {
+                if ("com.smartisan.notes" == pkg || "org.chromium.webview_shell" == pkg ) {
+                    AppLauncherManager.forceStopPackage(pkg)
+
+                    val intentLock = Intent("LOCK_ACTIVITY")
+                    intentLock.`package` = packageName
+                    intentLock.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                    applicationContext.startActivity(intentLock)
+
+                    return false
+                }
+                return true
+            }
+        })
 
         Log.d(TAG, "onCreate")
 

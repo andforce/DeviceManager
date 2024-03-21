@@ -1,6 +1,8 @@
 package com.andforce.device.manager
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -11,8 +13,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.manager.databinding.ActivityMainBinding
-import com.andforce.socket.MouseEvent
 import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
@@ -21,6 +23,7 @@ import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.screen.cast.listener.RecordState
+import com.andforce.socket.MouseEvent
 import com.andforce.socket.SocketEventViewModel
 import com.andforce.socket.SocketStatusListener
 import kotlinx.coroutines.launch
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
+
 
         // 启动Socket
         val intent = Intent("ACTION_SOCKET_EVENT_SERVICE").apply {
