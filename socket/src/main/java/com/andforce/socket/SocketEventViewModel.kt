@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.buffer
@@ -24,7 +25,7 @@ class SocketEventViewModel : ViewModel() {
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
 
     private val _apkFilePushEventFlow = MutableSharedFlow<ApkEvent?>(replay = 0)
-    var apkFilePushEventFlow: SharedFlow<ApkEvent?> = _apkFilePushEventFlow
+    var apkFilePushEventFlow: Flow<ApkEvent?> = _apkFilePushEventFlow
 
 
     private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
@@ -61,7 +62,7 @@ class SocketEventViewModel : ViewModel() {
     fun listenApkFilePushEvent() {
         viewModelScope.launch {
             socketClient?.let {
-                socketEventRepository.listenApkFilePushEvent(it).buffer(1024).collectLatest { apkEvent->
+                socketEventRepository.listenApkFilePushEvent(it).collectLatest { apkEvent->
                     _apkFilePushEventFlow.emit(apkEvent)
                 }
             }

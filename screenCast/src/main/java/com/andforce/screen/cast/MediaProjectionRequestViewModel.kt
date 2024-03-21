@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModel
 class MediaProjectionRequestViewModel(act: AppCompatActivity) : ViewModel() {
 
     private val _result = MutableLiveData<Result>()
-    val result: LiveData<Result> get() = _result
+    val permissionResult: LiveData<Result> get() = _result
 
     private val mpm: MediaProjectionManager by lazy {
         act.getSystemService(AppCompatActivity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager

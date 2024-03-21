@@ -3,11 +3,11 @@ package com.andforce.device.manager
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +29,7 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by lazy {
+    private val mediaProjectionRequestViewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         })[MediaProjectionRequestViewModel::class.java]
     }
 
-    private val viewMainBinding by lazy {
+    private val viewBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(viewMainBinding.root)
+        setContentView(viewBinding.root)
 
         // 启动Socket
         val intent = Intent("ACTION_SOCKET_EVENT_SERVICE").apply {
@@ -57,16 +57,16 @@ class MainActivity : AppCompatActivity() {
         }
         startService(intent)
 
-        val adapter = InstalledAppAdapter(this.applicationContext)
-        viewMainBinding.rvList.layoutManager = LinearLayoutManager(this)
+        val installedAppAdapter = InstalledAppAdapter(this.applicationContext)
+        viewBinding.rvList.layoutManager = LinearLayoutManager(this)
         // 设置上下间隔
-        viewMainBinding.rvList.addItemDecoration(object : RecyclerView.ItemDecoration() {
+        viewBinding.rvList.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: android.graphics.Rect, view: android.view.View, parent: RecyclerView, state: RecyclerView.State) {
                 outRect.top = 10
                 outRect.bottom = 10
             }
         })
-        viewMainBinding.rvList.adapter = adapter.also {
+        viewBinding.rvList.adapter = installedAppAdapter.also {
             it.setOnUninstallClickListener(object : OnUninstallClickListener {
                 override fun onUninstallClick(appBean: AppBean) {
                     packageManagerViewModel.uninstallApp(applicationContext, appBean)
@@ -74,27 +74,14 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
+        // Load本机应用
         packageManagerViewModel.installedApps.observe(this) {
-            adapter.setData(it)
+            installedAppAdapter.setData(it)
+        }.also {
+            packageManagerViewModel.loadInstalledApps(this.applicationContext)
         }
 
-        packageManagerViewModel.loadInstalledApps(this.applicationContext)
-
-        Log.d("RecordViewModel", "RecordViewModel1: $recordViewModel")
-
-        recordViewModel.recordState.observe(this@MainActivity) {
-            when (it) {
-                is RecordState.Recording -> {
-                    viewMainBinding.btnStart.text = "Recording"
-                }
-                is RecordState.Stopped -> {
-                    viewMainBinding.btnStart.text = "Stopped"
-                    ScreenCastService.stopService(this@MainActivity)
-                }
-            }
-        }
-
-        viewModel.result.observe(this) {
+        mediaProjectionRequestViewModel.permissionResult.observe(this) {
             when (it) {
                 is MediaProjectionRequestViewModel.Result.Success -> {
                     ScreenCastService.startService(this, false, it.data, it.resultCode)
@@ -105,15 +92,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewMainBinding.btnStart.setOnClickListener {
+        viewBinding.btnStart.setOnClickListener {
             if (recordViewModel.recordState.value is RecordState.Recording) {
                 Toast.makeText(this, "Recording, no need start", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.requestScreenCapturePermission()
+                mediaProjectionRequestViewModel.requestScreenCapturePermission()
             }
         }
 
-        viewMainBinding.btnSocket.setOnClickListener {
+        recordViewModel.recordState.observe(this@MainActivity) {
+            when (it) {
+                is RecordState.Recording -> {
+                    viewBinding.btnStart.text = "结束投屏"
+                    viewBinding.castInfo.text = "投屏正在进行"
+                }
+                is RecordState.Stopped -> {
+                    viewBinding.btnStart.text = "投屏开始"
+                    viewBinding.castInfo.text = "投屏结束"
+                    ScreenCastService.stopService(this@MainActivity)
+                }
+            }
+        }
+
+        viewBinding.btnSocket.setOnClickListener {
             // 启动Socket
             if (socketEventViewModel.socketStatusLiveData.value == SocketStatusListener.SocketStatus.DISCONNECTED) {
                 startService(intent)
@@ -125,34 +126,40 @@ class MainActivity : AppCompatActivity() {
         socketEventViewModel.socketStatusLiveData.observe(this@MainActivity) {
             when(it) {
                 SocketStatusListener.SocketStatus.CONNECTING -> {
-                    viewMainBinding.socketStatus.text = "Socket:CONNECTING"
-                    viewMainBinding.btnSocket.apply {
+                    viewBinding.socketStatus.text = "Socket:CONNECTING"
+                    viewBinding.btnSocket.apply {
                         isEnabled = false
                         text = "连接中..."
                     }
                 }
                 SocketStatusListener.SocketStatus.CONNECTED -> {
-                    viewMainBinding.socketStatus.text = "Socket:CONNECTED"
-                    viewMainBinding.btnSocket.apply {
+                    viewBinding.socketStatus.text = "Socket:CONNECTED"
+                    viewBinding.btnSocket.apply {
                         isEnabled = true
                         text = "断开Socket"
                     }
                 }
 
                 SocketStatusListener.SocketStatus.DISCONNECTED-> {
-                    viewMainBinding.socketStatus.text = "Socket:DISCONNECTED"
-                    viewMainBinding.btnSocket.apply {
+                    viewBinding.socketStatus.text = "Socket:DISCONNECTED"
+                    viewBinding.btnSocket.apply {
                         isEnabled = true
                         text = "连接Socket"
                     }
                 }
                 SocketStatusListener.SocketStatus.CONNECT_ERROR-> {
-                    viewMainBinding.socketStatus.text = "Socket:CONNECT_ERROR"
-                    viewMainBinding.btnSocket.apply {
+                    viewBinding.socketStatus.text = "Socket:CONNECT_ERROR"
+                    viewBinding.btnSocket.apply {
                         isEnabled = true
                         text = "重试Socket"
                     }
                 }
+            }
+        }
+
+        socketEventViewModel.apkFilePushEventFlow.asLiveData().observe(this@MainActivity) {
+            it?.let {
+                viewBinding.apkInfo.text = "APK事件: ${it.name} ${it.path}"
             }
         }
 
@@ -161,13 +168,13 @@ class MainActivity : AppCompatActivity() {
                 it?.let {
                     when (it) {
                         is MouseEvent.Down -> {
-                            viewMainBinding.mouseEvent.text = "鼠标事件: MouseDown"
+                            viewBinding.mouseEvent.text = "鼠标事件: MouseDown"
                         }
                         is MouseEvent.Move -> {
-                            viewMainBinding.mouseEvent.text = "鼠标事件: MouseMove"
+                            viewBinding.mouseEvent.text = "鼠标事件: MouseMove"
                         }
                         is MouseEvent.Up -> {
-                            viewMainBinding.mouseEvent.text = "鼠标事件: MouseUp"
+                            viewBinding.mouseEvent.text = "鼠标事件: MouseUp"
                         }
                     }
                 }

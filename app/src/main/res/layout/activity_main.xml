@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,15 +14,32 @@
             android:id="@+id/btn_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开始投屏" />
+            android:text="开始投屏"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/cast_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="投屏:STOPPED"
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <TextView
             android:id="@+id/mouse_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
-            android:text="鼠标事件: Unknown" />
+            android:text="鼠标事件: Unknown"
+            tools:ignore="HardcodedText,RtlHardcoded" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/apk_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="APK信息：空"
+        tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -33,14 +49,16 @@
             android:id="@+id/btn_socket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="启动Socket" />
+            android:text="启动Socket"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/socket_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
-            android:text="Socket:UNKNOWN" />
+            android:text="Socket:UNKNOWN"
+            tools:ignore="HardcodedText,RtlHardcoded" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
