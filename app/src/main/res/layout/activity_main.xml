@@ -7,35 +7,47 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="开始投屏" />
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始投屏" />
 
-    <TextView
-        android:id="@+id/tv_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Unknown" />
+        <TextView
+            android:id="@+id/mouse_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="鼠标事件: Unknown" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <TextView
-        android:id="@+id/socket_status"
-        android:text="Socket:UNKNOWN"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/checkbox_remote_control"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="启动Socket" />
+        <Button
+            android:id="@+id/btn_socket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动Socket" />
+
+        <TextView
+            android:id="@+id/socket_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:text="Socket:UNKNOWN" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>

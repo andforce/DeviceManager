@@ -10,9 +10,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
-import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import org.koin.android.ext.android.inject
 

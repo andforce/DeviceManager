@@ -17,7 +17,8 @@ class SocketEventViewModel : ViewModel() {
     private val socketEventRepository = SocketEventRepository()
 
     private var socketClient: SocketClient? = null
-    private var socketUrl: String = "http://192.168.2.183:3001"
+    //private var socketUrl: String = "http://192.168.2.183:3001"
+    private var socketUrl: String = "http://10.66.32.51:3001"
 
     private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()

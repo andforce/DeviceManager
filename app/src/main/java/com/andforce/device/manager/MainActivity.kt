@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +21,6 @@ import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.screen.cast.listener.RecordState
 import com.andforce.socket.SocketEventViewModel
 import com.andforce.socket.SocketStatusListener
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -78,16 +76,14 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("RecordViewModel", "RecordViewModel1: $recordViewModel")
 
-        lifecycleScope.launch {
-            recordViewModel.recordState.observe(this@MainActivity) {
-                when (it) {
-                    is RecordState.Recording -> {
-                        viewMainBinding.tvInfo.text = "Recording"
-                    }
-                    is RecordState.Stopped -> {
-                        viewMainBinding.tvInfo.text = "Stopped"
-                        ScreenCastService.stopService(this@MainActivity)
-                    }
+        recordViewModel.recordState.observe(this@MainActivity) {
+            when (it) {
+                is RecordState.Recording -> {
+                    viewMainBinding.btnStart.text = "Recording"
+                }
+                is RecordState.Stopped -> {
+                    viewMainBinding.btnStart.text = "Stopped"
+                    ScreenCastService.stopService(this@MainActivity)
                 }
             }
         }
@@ -107,52 +103,49 @@ class MainActivity : AppCompatActivity() {
             if (recordViewModel.recordState.value is RecordState.Recording) {
                 Toast.makeText(this, "Recording, no need start", Toast.LENGTH_SHORT).show()
             } else {
-                lifecycleScope.launch {
-                    viewModel.createScreenCaptureIntent()
-                }
+                viewModel.requestScreenCapturePermission()
             }
         }
 
-        viewMainBinding.checkboxRemoteControl.setOnClickListener() {
+        viewMainBinding.btnSocket.setOnClickListener() {
             val intent = android.content.Intent(this, com.andforce.socket.SocketEventService::class.java)
             startService(intent)
         }
 
-        lifecycleScope.launch {
-            socketEventViewModel.socketStatusLiveData.observe(this@MainActivity) {
-                when(it) {
-                    SocketStatusListener.SocketStatus.CONNECTING -> {
-                        viewMainBinding.socketStatus.text = "Socket:CONNECTING"
-                        viewMainBinding.checkboxRemoteControl.isEnabled = true
-                    }
-                    SocketStatusListener.SocketStatus.CONNECTED -> {
-                        viewMainBinding.socketStatus.text = "Socket:CONNECTED"
-                        viewMainBinding.checkboxRemoteControl.isEnabled = false
-                    }
+        socketEventViewModel.socketStatusLiveData.observe(this@MainActivity) {
+            when(it) {
+                SocketStatusListener.SocketStatus.CONNECTING -> {
+                    viewMainBinding.socketStatus.text = "Socket:CONNECTING"
+                    viewMainBinding.btnSocket.isEnabled = true
+                }
+                SocketStatusListener.SocketStatus.CONNECTED -> {
+                    viewMainBinding.socketStatus.text = "Socket:CONNECTED"
+                    viewMainBinding.btnSocket.isEnabled = false
+                }
 
-                    SocketStatusListener.SocketStatus.DISCONNECTED-> {
-                        viewMainBinding.socketStatus.text = "Socket:DISCONNECTED"
-                        viewMainBinding.checkboxRemoteControl.isEnabled = true
-                    }
-                    SocketStatusListener.SocketStatus.CONNECT_ERROR-> {
-                        viewMainBinding.socketStatus.text = "Socket:CONNECT_ERROR"
-                        viewMainBinding.checkboxRemoteControl.isEnabled = true
-                    }
+                SocketStatusListener.SocketStatus.DISCONNECTED-> {
+                    viewMainBinding.socketStatus.text = "Socket:DISCONNECTED"
+                    viewMainBinding.btnSocket.isEnabled = true
+                }
+                SocketStatusListener.SocketStatus.CONNECT_ERROR-> {
+                    viewMainBinding.socketStatus.text = "Socket:CONNECT_ERROR"
+                    viewMainBinding.btnSocket.isEnabled = true
                 }
             }
         }
+
         lifecycleScope.launch {
             socketEventViewModel.mouseEventFlow.collect {
                 it?.let {
                     when (it) {
                         is MouseEvent.Down -> {
-                            viewMainBinding.tvInfo.text = "MouseDown"
+                            viewMainBinding.mouseEvent.text = "鼠标事件: MouseDown"
                         }
                         is MouseEvent.Move -> {
-                            viewMainBinding.tvInfo.text = "MouseMove"
+                            viewMainBinding.mouseEvent.text = "鼠标事件: MouseMove"
                         }
                         is MouseEvent.Up -> {
-                            viewMainBinding.tvInfo.text = "MouseUp"
+                            viewMainBinding.mouseEvent.text = "鼠标事件: MouseUp"
                         }
                     }
                 }

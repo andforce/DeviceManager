@@ -8,21 +8,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 
 class MediaProjectionRequestViewModel(act: AppCompatActivity) : ViewModel() {
 
     private val _result = MutableLiveData<Result>()
     val result: LiveData<Result> get() = _result
 
-    private var mpm: MediaProjectionManager? = null
-
-    init {
-        mpm = act.getSystemService(AppCompatActivity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+    private val mpm: MediaProjectionManager by lazy {
+        act.getSystemService(AppCompatActivity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
     }
 
-    private var launcher = act.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private var activityResultLauncher = act.registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
         when (it.resultCode) {
             Activity.RESULT_OK -> {
                 it.data?.let { data ->
@@ -38,12 +36,8 @@ class MediaProjectionRequestViewModel(act: AppCompatActivity) : ViewModel() {
         }
     }
 
-    fun createScreenCaptureIntent() {
-        viewModelScope.launch {
-            mpm?.createScreenCaptureIntent()?.let {
-                launcher.launch(it)
-            }
-        }
+    fun requestScreenCapturePermission() {
+        activityResultLauncher.launch(mpm.createScreenCaptureIntent())
     }
 
 
