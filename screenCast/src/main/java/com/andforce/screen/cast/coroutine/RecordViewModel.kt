@@ -9,8 +9,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.andforce.screen.cast.listener.RecordState
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,27 +19,26 @@ class RecordViewModel :ViewModel(){
     private val recordRepository = RecordRepository()
 
     private val _capturedImage = MutableStateFlow<Bitmap?>(null)
-    val capturedImage: StateFlow<Bitmap?> get() = _capturedImage
+    val capturedImageFlow: StateFlow<Bitmap?> get() = _capturedImage
 
     private val _recordState = MutableStateFlow<RecordState>(RecordState.Stopped)
     val recordState: LiveData<RecordState> = _recordState.asLiveData()
 
     fun startCaptureImages(context: Context, mp: MediaProjection, scale: Float) {
+        viewModelScope.launch {
+            recordRepository.recordStatusFlow().collect {
+                _recordState.tryEmit(it)
+            }
+        }
+
         val handler = CoroutineExceptionHandler { _, exception ->
             println("Caught $exception")
         }
         viewModelScope.launch(handler) {
             _recordState.tryEmit(RecordState.Recording)
-            recordRepository.captureBitmap(context.applicationContext, mp, scale).collectLatest {
+            recordRepository.captureBitmapFlow(context.applicationContext, mp, scale).collectLatest {
                 _capturedImage.value = it
             }
         }
-
-        viewModelScope.launch {
-            recordRepository.listenCapture().collect {
-                _recordState.tryEmit(it)
-            }
-        }
     }
-
 }

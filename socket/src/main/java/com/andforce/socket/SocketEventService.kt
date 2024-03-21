@@ -32,7 +32,7 @@ class SocketEventService: Service() {
     private val recordViewModel: RecordViewModel by inject()
 
     private var capturedImageJob: Job? = null
-    private var apkEventJob: Job? = null
+    private var apkPushEventJob: Job? = null
     private var apkDownloadJob: Job? = null
 
     private val connectivityManager: ConnectivityManager by lazy {
@@ -86,15 +86,15 @@ class SocketEventService: Service() {
 
         capturedImageJob = GlobalScope.launch(handler) {
             Log.d(TAG, "recordViewModel.capturedImage")
-            recordViewModel.capturedImage.collect {
+            recordViewModel.capturedImageFlow.collect {
                 socketEventViewModel.sendBitmapToServer(it)
             }
         }
 
-        apkEventJob = GlobalScope.launch {
+        apkPushEventJob = GlobalScope.launch {
             Log.d(TAG, "socketEventViewModel.apkFilePushEventFlow.collect")
             socketEventViewModel.apkFilePushEventFlow.collect {
-                Log.d("CastService", "collect ApkEvent: $it")
+                Log.d(TAG, "collect ApkEvent: $it")
                 it?.let {
                     downloaderViewModel.downloadApk(applicationContext, it.name, it.path)
                 }
@@ -155,7 +155,7 @@ class SocketEventService: Service() {
         socketEventViewModel.disconnect()
 
         capturedImageJob?.cancel()
-        apkEventJob?.cancel()
+        apkPushEventJob?.cancel()
         apkDownloadJob?.cancel()
     }
 

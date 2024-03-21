@@ -9,8 +9,12 @@ import kotlinx.coroutines.flow.mapNotNull
 class RecordRepository {
 
     private val recordDataSource = RecordDataSource()
-    suspend fun captureBitmap(context: Context, mp: MediaProjection, scale: Float): Flow<Bitmap> =
-        recordDataSource.captureImages(context, mp, scale).mapNotNull { image ->
+
+    suspend fun captureImageFlow(context: Context, mp: MediaProjection, scale: Float) =
+        recordDataSource.captureImageFlow(context, mp, scale)
+
+    suspend fun captureBitmapFlow(context: Context, mp: MediaProjection, scale: Float): Flow<Bitmap> =
+        recordDataSource.captureImageFlow(context, mp, scale).mapNotNull { image ->
             val width = image.width
             val height = image.height
 
@@ -35,6 +39,5 @@ class RecordRepository {
                 image.close()
             }
         }
-
-    suspend fun listenCapture() = recordDataSource.listenRecordStatus()
+    suspend fun recordStatusFlow() = recordDataSource.recordStatusFlow()
 }

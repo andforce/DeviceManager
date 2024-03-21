@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.callbackFlow
 class RecordDataSource {
     private var virtualDisplayImageReader: VirtualDisplayImageReader? = null
 
-    suspend fun listenRecordStatus() = callbackFlow {
+    suspend fun recordStatusFlow() = callbackFlow {
 
         val callback = object : RecordStatusListener {
             override fun onStatus(status: RecordState) {
@@ -38,7 +38,7 @@ class RecordDataSource {
         }
     }
 
-    suspend fun captureImages(context: Context, mp: MediaProjection, scale: Float) = callbackFlow {
+    suspend fun captureImageFlow(context: Context, mp: MediaProjection, scale: Float) = callbackFlow {
 
         if (virtualDisplayImageReader == null) {
             virtualDisplayImageReader = VirtualDisplayImageReader(mp)
