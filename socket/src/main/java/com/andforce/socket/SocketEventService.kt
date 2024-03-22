@@ -1,14 +1,18 @@
 package com.andforce.socket
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import com.andforce.device.applock.AppLauncherManager
+import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.PackageManagerHelper
 import com.andforce.network.NetworkViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
@@ -69,21 +73,30 @@ class SocketEventService: Service() {
 //        return capabilities != null
 //    }
 
+    fun isBrowserApp(context: Context, packageName: String): Boolean {
+        val packageManager = context.packageManager
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"))
+        val activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        for (info in activities) {
+            if (info.activityInfo.packageName == packageName) {
+                return true
+            }
+        }
+        return false
+    }
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
 
         AppLauncherManager.startListener(object : AppLauncherManager.Action {
             override fun allowLaunch(intent: Intent, pkg: String): Boolean {
-                if ("com.smartisan.notes" == pkg || "org.chromium.webview_shell" == pkg ) {
-                    AppLauncherManager.forceStopPackage(pkg)
 
+                if (!AvoidList.list.contains(pkg)) {
                     val intentLock = Intent("LOCK_ACTIVITY")
                     intentLock.`package` = packageName
                     intentLock.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
                     applicationContext.startActivity(intentLock)
-
                     return false
                 }
                 return true
