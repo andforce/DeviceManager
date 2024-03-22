@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withCreated
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andforce.device.manager.databinding.ActivityMainBinding
@@ -16,6 +17,9 @@ import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
+import com.andforce.network.ApiService
+import com.andforce.network.AppInfo
+import com.andforce.network.NetworkViewModel
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
@@ -45,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val recordViewModel: RecordViewModel by inject()
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
+    private val networkViewModel: NetworkViewModel by inject()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,8 +81,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Load本机应用
-        packageManagerViewModel.installedApps.observe(this) {
+        packageManagerViewModel.installedApps.observe(this) { it ->
             installedAppAdapter.setData(it)
+            val appInfo = it.filter { !it.isSystem }.map { appBean ->
+                AppInfo(
+                    appBean.appName,
+                    appBean.packageName
+                )
+            }
+            networkViewModel.postAppInfo("http://10.66.32.51:3001", appInfo)
         }.also {
             packageManagerViewModel.loadInstalledApps(this.applicationContext)
         }

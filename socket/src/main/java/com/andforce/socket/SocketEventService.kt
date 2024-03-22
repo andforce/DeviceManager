@@ -9,6 +9,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.Uri
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.andforce.device.applock.AppLauncherManager
@@ -21,7 +22,9 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 /**
@@ -53,6 +56,7 @@ class SocketEventService: Service() {
             socketEventViewModel.connectIfNeed()
             socketEventViewModel.listenMouseEventFromSocket()
             socketEventViewModel.listenApkFilePushEvent()
+            socketEventViewModel.listenApkUninstallEvent()
             socketEventViewModel.listenSocketStatus()
 
             // 开启自动触摸服务
@@ -130,6 +134,27 @@ class SocketEventService: Service() {
             }
         }
 
+        GlobalScope.launch(Dispatchers.Main){
+            socketEventViewModel.apkUninstallEventFlow.collect(){
+                Log.d(TAG, "collect ApkUninstallEvent: $it")
+                it?.let {
+                    val helper = PackageManagerHelper(applicationContext)
+                    helper.registerListener { actionType, success ->
+                        if (actionType == PackageManagerHelper.ACTION_TYPE_UNINSTALL) {
+                            Looper.prepare()
+                            if (success) {
+                                Toast.makeText(applicationContext, "uninstall apk success", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(applicationContext, "uninstall apk failed", Toast.LENGTH_SHORT).show()
+                            }
+                            Looper.loop()
+                        }
+                        Log.d(TAG, "uninstall apk success: $success")
+                    }
+                    helper.deletePackage(it.packageName)
+                }
+            }
+        }
         apkDownloadJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
             downloaderViewModel.fileDownloadStateFlow.collect {
@@ -169,6 +194,7 @@ class SocketEventService: Service() {
         socketEventViewModel.connectIfNeed()
         socketEventViewModel.listenMouseEventFromSocket()
         socketEventViewModel.listenApkFilePushEvent()
+        socketEventViewModel.listenApkUninstallEvent()
 
         return START_STICKY
     }

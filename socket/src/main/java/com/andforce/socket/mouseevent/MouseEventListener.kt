@@ -1,12 +1,17 @@
 package com.andforce.socket.mouseevent
 
 import com.andforce.socket.apkevent.ApkPushEvent
+import com.andforce.socket.apkevent.ApkUninstallEvent
 
 interface MouseEventListener {
 
     fun onDown(mouseEvent: MouseEvent)
     fun onMove(mouseEvent: MouseEvent)
     fun onUp(mouseEvent: MouseEvent)
+}
+
+interface ApkUninstallListener {
+    fun onApkUninstall(apkName: ApkUninstallEvent)
 }
 
 interface ApkEventListener {

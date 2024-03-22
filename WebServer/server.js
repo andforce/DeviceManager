@@ -1,7 +1,12 @@
+var bodyParser = require('body-parser');
+
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
     users = [];
+
+app.use(bodyParser());
+
 const fs = require('fs');
 const path = require("path");
 
@@ -48,7 +53,27 @@ app.post('/upload', (req, res) => {
     });
 });
 
+app.post('/post_appinfo', (req, res) => {
+    console.log('receive post appinfo event, req:' + req);
 
+    // Get the data from the request body
+    var data = req.body;
+    // data 是list，循环打印
+    data.forEach(function(item) {
+        console.log('name: ' + item.name + ', packageName: ' + item.packageName);
+    });
+
+    // Emit the data using socket.io
+    if (globalSocket) {
+        console.log('emit appinfo event');
+        globalSocket.broadcast.emit('appinfo', data);
+    } else {
+        console.log('emit appinfo event, error: no socket');
+    }
+
+    // Send a response back to the client
+    res.send({ code: 100, message: 'success' });
+});
 
 
 //specify the html we will use
@@ -90,6 +115,11 @@ io.sockets.on('connection', function(socket) {
     socket.on('apk-upload', function(data) {
         console.log('apk-upload event:', data);
         socket.broadcast.emit('apk-upload', data);
+    });
+
+    socket.on('uninstall-app', function(data) {
+        console.log('uninstall-app event:', data);
+        socket.broadcast.emit('uninstall-app', data);
     });
 
     //new image get

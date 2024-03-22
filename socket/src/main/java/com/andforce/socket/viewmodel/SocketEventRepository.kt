@@ -5,6 +5,8 @@ import com.andforce.socket.mouseevent.ApkEventListener
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.mouseevent.MouseEventListener
 import com.andforce.socket.SocketClient
+import com.andforce.socket.apkevent.ApkUninstallEvent
+import com.andforce.socket.mouseevent.ApkUninstallListener
 import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +44,19 @@ class SocketEventRepository {
         socketClient.registerApkEventListener(listener)
         awaitClose {
             socketClient.unRegisterApkEventListener()
+        }
+    }
+
+    suspend fun listenApkUninstallEvent(socketClient: SocketClient): Flow<ApkUninstallEvent> = callbackFlow {
+        val listener = object : ApkUninstallListener {
+
+            override fun onApkUninstall(apkName: ApkUninstallEvent) {
+                trySend(apkName)
+            }
+        }
+        socketClient.registerApkUninstallListener(listener)
+        awaitClose {
+            socketClient.unregisterApkUninstallListener()
         }
     }
 

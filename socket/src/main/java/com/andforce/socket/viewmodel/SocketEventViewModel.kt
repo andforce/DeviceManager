@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.andforce.socket.apkevent.ApkPushEvent
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.SocketClient
+import com.andforce.socket.apkevent.ApkUninstallEvent
 import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,8 +22,8 @@ class SocketEventViewModel : ViewModel() {
 
     private var socketClient: SocketClient? = null
     //private var socketUrl: String = "http://192.168.2.183:3001"
-//    private var socketUrl: String = "http://10.66.32.51:3001"
-    private var socketUrl: String = "http://10.66.50.84:3001"
+    private var socketUrl: String = "http://10.66.32.51:3001"
+//    private var socketUrl: String = "http://10.66.50.84:3001"
 
     private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
@@ -30,6 +31,9 @@ class SocketEventViewModel : ViewModel() {
     // apk file push event
     private val _apkFilePushEventFlow = MutableStateFlow<ApkPushEvent?>(null)
     val apkFilePushEventFlow: Flow<ApkPushEvent?> = _apkFilePushEventFlow
+
+    private val _apkUninstallEventFlow = MutableStateFlow<ApkUninstallEvent?>(null)
+    val apkUninstallEventFlow: Flow<ApkUninstallEvent?> = _apkUninstallEventFlow
 
     // mouse event
     private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
@@ -68,6 +72,16 @@ class SocketEventViewModel : ViewModel() {
             socketClient?.let {
                 socketEventRepository.listenApkFilePushEvent(it).collectLatest { apkEvent->
                     _apkFilePushEventFlow.emit(apkEvent)
+                }
+            }
+        }
+    }
+
+    fun listenApkUninstallEvent() {
+        viewModelScope.launch {
+            socketClient?.let {
+                socketEventRepository.listenApkUninstallEvent(it).collectLatest { apkEvent->
+                    _apkUninstallEventFlow.emit(apkEvent)
                 }
             }
         }

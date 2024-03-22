@@ -2,7 +2,9 @@ package com.andforce.socket
 
 import android.util.Log
 import com.andforce.socket.apkevent.ApkPushEvent
+import com.andforce.socket.apkevent.ApkUninstallEvent
 import com.andforce.socket.mouseevent.ApkEventListener
+import com.andforce.socket.mouseevent.ApkUninstallListener
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.mouseevent.MouseEventListener
 import com.andforce.socket.mouseevent.SocketStatusListener
@@ -16,7 +18,16 @@ class SocketClient(private val url: String) {
 
     private var mouseEventListener: MouseEventListener? = null
     private var apkEventListener: ApkEventListener? = null
+    private var apkUninstallListener: ApkUninstallListener? = null
     private var socketStatusListener: SocketStatusListener? = null
+
+    fun registerApkUninstallListener(listener: ApkUninstallListener) {
+        apkUninstallListener = listener
+    }
+
+    fun unregisterApkUninstallListener() {
+        apkUninstallListener = null
+    }
 
     fun registerSocketStatusListener(listener: SocketStatusListener) {
         this.socketStatusListener = listener
@@ -102,6 +113,13 @@ class SocketClient(private val url: String) {
             val data = args[0] as JSONObject
             val down = ApkPushEvent(data.getString("name"), data.getString("path"))
             apkEventListener?.onApk(down)
+        })
+
+        socket?.on("uninstall-app", Emitter.Listener { args ->
+            Log.d("SocketClient", "uninstall-app" + args[0].toString())
+            val data = args[0] as JSONObject
+            val down = ApkUninstallEvent(data.getString("name"), data.getString("packageName"))
+            apkUninstallListener?.onApkUninstall(down)
         })
 
         socket?.connect()

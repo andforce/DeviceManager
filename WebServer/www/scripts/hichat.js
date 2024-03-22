@@ -25,6 +25,30 @@ HiChat.prototype = {
             event.preventDefault();
         });
 
+        // appinfo
+        this.socket.on('appinfo', function(data) {
+            var list = document.getElementById('myList');
+
+            console.log('Received appinfo event', data);
+
+            data.forEach(function(item) {
+                var listItem = document.createElement('div');
+                listItem.textContent = item.name + ' (' + item.packageName + ')';
+
+                var uninstallButton = document.createElement('button');
+                uninstallButton.textContent = 'Uninstall';
+                uninstallButton.onclick = function() {
+                    // Send uninstall event here
+                    console.log('Uninstalling ' + item.packageName);
+
+                    that.socket.emit('uninstall-app', item);
+                };
+
+                listItem.appendChild(uninstallButton);
+                list.appendChild(listItem);
+            });
+        });
+
         var dropzone = document.getElementById('dropzone');
 
         dropzone.addEventListener('dragover', function(e) {
