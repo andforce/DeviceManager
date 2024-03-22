@@ -18,6 +18,7 @@ import com.andforce.network.NetworkViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -111,13 +112,10 @@ class SocketEventService: Service() {
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
         Log.d(TAG, "registerNetworkCallback")
 
-        val handler = CoroutineExceptionHandler { _, exception ->
-            println("Caught $exception")
-        }
-
-        capturedImageJob = GlobalScope.launch(handler) {
+        capturedImageJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "recordViewModel.capturedImage")
             recordViewModel.capturedImageFlow.collect {
+                Log.i("CAPTURE", "start sendBitmapToServer")
                 socketEventViewModel.sendBitmapToServer(it)
             }
         }

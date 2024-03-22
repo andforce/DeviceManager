@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -30,11 +31,11 @@ class ScreenCastService: Service() {
             val startIntent = Intent(context.applicationContext, ScreenCastService::class.java)
             startIntent.putExtra("data", data)
             startIntent.putExtra("code", code)
-            if (isForeground) {
-                context.applicationContext.startForegroundService(startIntent)
-            } else {
-                context.applicationContext.startService(startIntent)
-            }
+            context.applicationContext.startForegroundService(startIntent)
+//            if (isForeground) {
+//            } else {
+//                context.applicationContext.startService(startIntent)
+//            }
         }
 
         fun stopService(context: Context) {
@@ -46,7 +47,7 @@ class ScreenCastService: Service() {
     override fun onCreate() {
         super.onCreate()
 
-        //startForeground(NOTIFICATION_ID, createNotification())
+        startForeground(NOTIFICATION_ID, createNotification())
         Log.d(TAG, "onCreate")
         mpm = applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
     }
@@ -92,10 +93,16 @@ class ScreenCastService: Service() {
     }
 
     private fun createNotification(): Notification {
-        val builder: Notification.Builder = Notification.Builder(this,
-            createNotificationChannel("my_service", "My Background Service"))
+        val builder = Notification.Builder(
+            this,
+            createNotificationChannel("my_service", "My Background Service")
+        )
+        val intent = Intent(this, ScreenCastActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentTitle("Recording Screen")
             .setContentText("Recording in progress")
+            // intent to open an Activity
+            .setContentIntent(pendingIntent)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
         return builder.build()
     }

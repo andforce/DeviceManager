@@ -1,6 +1,7 @@
 package com.andforce.socket
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -80,25 +81,15 @@ class SocketEventViewModel : ViewModel() {
         }
     }
 
-    suspend fun sendBitmapToServer(bitmap: Bitmap?) {
-        bitmap?.let {
-            withContext(Dispatchers.IO) {
-                if (socketClient?.isConnected() == false) {
-                    return@withContext
-                }
-
-                val byteArrayOutputStream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
-                val byteArray = byteArrayOutputStream.toByteArray()
-
-                socketClient?.send(byteArray)
-                runCatching {
-                    byteArrayOutputStream.close()
-                }
-                if (bitmap.isRecycled.not()) {
-                    bitmap.recycle()
-                }
+    suspend fun sendBitmapToServer(byteArray: ByteArray?) {
+        byteArray?.let {
+            val isConnect = socketClient?.isConnected() ?: false
+            Log.i("CAPTURE", "start sendBitmapToServer, isConnect:$isConnect")
+            Log.i("CAPTURE", "------------------send finish------------------")
+            if (isConnect.not()) {
+                return
             }
+            socketClient?.send(byteArray)
         }
     }
 }
