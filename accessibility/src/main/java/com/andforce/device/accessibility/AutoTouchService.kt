@@ -6,7 +6,8 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.andforce.commonutils.ScreenUtils
 import com.andforce.injectevent.InjectEventHelper
-import com.andforce.socket.SocketEventViewModel
+import com.andforce.socket.mouseevent.MouseEvent
+import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -42,13 +43,13 @@ class AutoTouchService : AccessibilityService() {
                     val fromRealY = if (it.y * scaleH < 0) 0f else it.y * scaleH
 
                     when (it) {
-                        is com.andforce.socket.MouseEvent.Down -> {
+                        is MouseEvent.Down -> {
                             injectEventHelper.injectTouchDown(this@AutoTouchService,screenW,screenH,fromRealX,fromRealY)
                         }
-                        is com.andforce.socket.MouseEvent.Move -> {
+                        is MouseEvent.Move -> {
                             injectEventHelper.injectTouchMove(this@AutoTouchService,screenW,screenH,fromRealX,fromRealY)
                         }
-                        is com.andforce.socket.MouseEvent.Up -> {
+                        is MouseEvent.Up -> {
                             injectEventHelper.injectTouchUp(this@AutoTouchService,screenW,screenH,fromRealX,fromRealY)
                         }
                     }

@@ -4,8 +4,7 @@ import android.app.Application
 import com.andforce.network.NetworkViewModel
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
-import com.andforce.socket.SocketEventViewModel
-import kotlinx.coroutines.MainScope
+import com.andforce.socket.viewmodel.SocketEventViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module

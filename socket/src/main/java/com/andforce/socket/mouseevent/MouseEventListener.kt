@@ -1,6 +1,6 @@
-package com.andforce.socket
+package com.andforce.socket.mouseevent
 
-import com.andforce.network.DowloadStatus
+import com.andforce.socket.apkevent.ApkPushEvent
 
 interface MouseEventListener {
 
@@ -10,7 +10,7 @@ interface MouseEventListener {
 }
 
 interface ApkEventListener {
-    fun onApk(apkName: ApkEvent)
+    fun onApk(apkName: ApkPushEvent)
 }
 
 interface SocketStatusListener {

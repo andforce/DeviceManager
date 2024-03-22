@@ -1,6 +1,11 @@
 package com.andforce.socket
 
 import android.util.Log
+import com.andforce.socket.apkevent.ApkPushEvent
+import com.andforce.socket.mouseevent.ApkEventListener
+import com.andforce.socket.mouseevent.MouseEvent
+import com.andforce.socket.mouseevent.MouseEventListener
+import com.andforce.socket.mouseevent.SocketStatusListener
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -95,7 +100,7 @@ class SocketClient(private val url: String) {
         socket?.on("apk-upload", Emitter.Listener { args ->
             Log.d("SocketClient", "apk-upload" + args[0].toString())
             val data = args[0] as JSONObject
-            val down = ApkEvent(data.getString("name"), data.getString("path"))
+            val down = ApkPushEvent(data.getString("name"), data.getString("path"))
             apkEventListener?.onApk(down)
         })
 

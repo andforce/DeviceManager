@@ -15,7 +15,7 @@
         </service>
 
         <service android:name=".SystemAutoTouchService"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.andforce.SystemAutoTouchService" />
             </intent-filter>

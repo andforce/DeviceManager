@@ -1,11 +1,13 @@
-package com.andforce.socket
+package com.andforce.socket.viewmodel
 
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import com.andforce.socket.apkevent.ApkPushEvent
+import com.andforce.socket.mouseevent.MouseEvent
+import com.andforce.socket.SocketClient
+import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +15,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 
 class SocketEventViewModel : ViewModel() {
     private val socketEventRepository = SocketEventRepository()
@@ -26,10 +26,11 @@ class SocketEventViewModel : ViewModel() {
     private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
 
-    private val _apkFilePushEventFlow = MutableStateFlow<ApkEvent?>(null)
-    val apkFilePushEventFlow: Flow<ApkEvent?> = _apkFilePushEventFlow
+    // apk file push event
+    private val _apkFilePushEventFlow = MutableStateFlow<ApkPushEvent?>(null)
+    val apkFilePushEventFlow: Flow<ApkPushEvent?> = _apkFilePushEventFlow
 
-
+    // mouse event
     private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
     var mouseEventFlow: SharedFlow<MouseEvent?> = _mouseEventFlow
 

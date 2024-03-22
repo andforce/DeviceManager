@@ -16,7 +16,7 @@ import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.PackageManagerHelper
 import com.andforce.network.NetworkViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
+import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -120,7 +120,7 @@ class SocketEventService: Service() {
             }
         }
 
-        apkPushEventJob = GlobalScope.launch {
+        apkPushEventJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "socketEventViewModel.apkFilePushEventFlow.collect")
             socketEventViewModel.apkFilePushEventFlow.collect {
                 Log.d(TAG, "collect ApkEvent: $it")
@@ -130,7 +130,7 @@ class SocketEventService: Service() {
             }
         }
 
-        apkDownloadJob = GlobalScope.launch {
+        apkDownloadJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
             downloaderViewModel.fileDownloadStateFlow.collect {
                 val helper = PackageManagerHelper(applicationContext)

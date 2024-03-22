@@ -6,7 +6,8 @@ import android.os.IBinder
 import android.util.Log
 import com.andforce.commonutils.ScreenUtils
 import com.andforce.injectevent.InjectEventHelper
-import com.andforce.socket.SocketEventViewModel
+import com.andforce.socket.mouseevent.MouseEvent
+import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -47,13 +48,13 @@ class SystemAutoTouchService: Service() {
                         val fromRealY = if (it.y * scaleH < 0) 0f else it.y * scaleH
 
                         when (it) {
-                            is com.andforce.socket.MouseEvent.Down -> {
+                            is MouseEvent.Down -> {
                                 injectEventHelper.injectTouchDownSystem(fromRealX,fromRealY)
                             }
-                            is com.andforce.socket.MouseEvent.Move -> {
+                            is MouseEvent.Move -> {
                                 injectEventHelper.injectTouchMoveSystem(fromRealX,fromRealY)
                             }
-                            is com.andforce.socket.MouseEvent.Up -> {
+                            is MouseEvent.Up -> {
                                 injectEventHelper.injectTouchUpSystem(fromRealX,fromRealY)
                             }
                         }

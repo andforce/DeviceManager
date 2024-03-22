@@ -1,10 +1,14 @@
-package com.andforce.socket
+package com.andforce.socket.viewmodel
 
+import com.andforce.socket.apkevent.ApkPushEvent
+import com.andforce.socket.mouseevent.ApkEventListener
+import com.andforce.socket.mouseevent.MouseEvent
+import com.andforce.socket.mouseevent.MouseEventListener
+import com.andforce.socket.SocketClient
+import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 
 class SocketEventRepository {
@@ -29,9 +33,9 @@ class SocketEventRepository {
         }
     }
 
-    suspend fun listenApkFilePushEvent(socketClient: SocketClient): Flow<ApkEvent> = callbackFlow {
+    suspend fun listenApkFilePushEvent(socketClient: SocketClient): Flow<ApkPushEvent> = callbackFlow {
         val listener = object : ApkEventListener {
-            override fun onApk(apkName: ApkEvent) {
+            override fun onApk(apkName: ApkPushEvent) {
                 trySend(apkName)
             }
         }
