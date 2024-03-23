@@ -8,29 +8,26 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-    <style>
-        #myList {
-            width: 200px;
-            height: 600px;
-            overflow: auto;
-        }
-    </style>
-
 </head>
 
 <body>
-    <div id="myList"></div>
+    <style>
+        .flex-container {
+            display: flex;
+        }
+    </style>
 
-    <div class="wrapper">
+    <div class="flex-container">
+        <div id="myList"></div>
 
-        <img id="image" src="screen.jpeg" alt="Image">
+        <div class="wrapper">
+            <img id="image" src="screen.jpeg" alt="Image">
+        </div>
 
         <div id="dropzone" style="width: 500px; height: 500px; border: 1px solid black;"></div>
-
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="scripts/hichat.js"></script>
+    <script src="scripts/web_client.js"></script>
 </body>
 </html>

@@ -17,3 +17,9 @@ html, body {
 footer {
     text-align: center;
 }
+
+#myList {
+    width: 400px;
+    height: 400px;
+    overflow: auto;
+}

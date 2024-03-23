@@ -1,12 +1,12 @@
 
 window.onload = function() {
-    var hichat = new HiChat();
+    var hichat = new Web_client();
     hichat.init();
 };
-var HiChat = function() {
+var Web_client = function() {
     this.socket = null;
 };
-HiChat.prototype = {
+Web_client.prototype = {
     init: function() {
         var that = this;
         this.socket = io.connect();
