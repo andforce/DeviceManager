@@ -4,17 +4,12 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -34,8 +29,8 @@ class NetworkViewModel : ViewModel() {
     private val retrofit = Retrofit.Builder()
 //        .baseUrl("http://10.66.50.84:3001")
 //        .baseUrl("http://10.66.32.51:3001")
-        .baseUrl("http://192.168.8.90:3001")
-        //.baseUrl("http://192.168.2.183:3001")
+//        .baseUrl("http://192.168.8.90:3001")
+        .baseUrl("http://192.168.2.183:3001")
         // 使用OKHttp下载
         .client(client)
         .build()
@@ -72,16 +67,16 @@ class NetworkViewModel : ViewModel() {
             response
         }
         .build()
+
     private val retrofit2 = Retrofit.Builder()
-//        .baseUrl("http://10.66.50.84:3001")
 //        .baseUrl("http://10.66.32.51:3001")
-        //.baseUrl("http://192.168.2.183:3001")
-        .baseUrl("http://192.168.8.90:3001")
+//        .baseUrl("http://192.168.8.90:3001")
+//        .baseUrl("http://10.66.50.84:3001")
+        .baseUrl("http://192.168.2.183:3001")
         .addConverterFactory(GsonConverterFactory.create())
         // 使用OKHttp下载
         .client(client2)
         .build()
-
     private val downloadService2 = retrofit2.create(ApiService2::class.java)
 
     fun postAppInfo(url: String, appInfo: List<AppInfo>) {
