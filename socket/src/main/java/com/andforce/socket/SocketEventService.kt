@@ -1,11 +1,15 @@
 package com.andforce.socket
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.Uri
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.andforce.device.applock.AppLauncherManager
@@ -18,7 +22,9 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 /**
@@ -35,7 +41,9 @@ class SocketEventService: Service() {
     private val recordViewModel: RecordViewModel by inject()
 
     private var capturedImageJob: Job? = null
+    private var appUninstallJob: Job? = null
     private var apkPushEventJob: Job? = null
+    private var apkDownloadJob: Job? = null
 
     private val connectivityManager: ConnectivityManager by lazy {
         getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -65,6 +73,23 @@ class SocketEventService: Service() {
         }
     }
 
+//    private fun isNetworkAvailable(): Boolean {
+//        val network = connectivityManager.activeNetwork
+//        val capabilities = connectivityManager.getNetworkCapabilities(network)
+//        return capabilities != null
+//    }
+
+    fun isBrowserApp(context: Context, packageName: String): Boolean {
+        val packageManager = context.packageManager
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"))
+        val activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        for (info in activities) {
+            if (info.activityInfo.packageName == packageName) {
+                return true
+            }
+        }
+        return false
+    }
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
@@ -108,8 +133,10 @@ class SocketEventService: Service() {
                     downloaderViewModel.downloadApk(applicationContext, it.name, it.path)
                 }
             }
+        }
 
-            socketEventViewModel.apkUninstallEventFlow.collect {
+        appUninstallJob = GlobalScope.launch(Dispatchers.IO){
+            socketEventViewModel.apkUninstallEventFlow.collect(){
                 Log.d(TAG, "collect ApkUninstallEvent: $it")
                 it?.let {
                     val helper = PackageManagerHelper(applicationContext)
@@ -122,7 +149,8 @@ class SocketEventService: Service() {
                     helper.deletePackage(it.packageName)
                 }
             }
-
+        }
+        apkDownloadJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
             downloaderViewModel.fileDownloadStateFlow.collect {
                 val helper = PackageManagerHelper(applicationContext)
@@ -138,7 +166,6 @@ class SocketEventService: Service() {
                 }
                 helper.installPackage(it)
             }
-
         }
     }
 
@@ -179,6 +206,8 @@ class SocketEventService: Service() {
 
         capturedImageJob?.cancel()
         apkPushEventJob?.cancel()
+        apkDownloadJob?.cancel()
+        appUninstallJob?.cancel()
     }
 
     override fun onBind(intent: Intent?) = null
