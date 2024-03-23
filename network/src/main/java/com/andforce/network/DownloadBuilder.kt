@@ -21,17 +21,16 @@ typealias DOWLOAD_ERROR = (Throwable) -> Unit
 typealias DOWLOAD_PROCESS = (downloadedSize: Long, length: Long, process: Float) -> Unit
 typealias DOWLOAD_SUCCESS = (uri: File) -> Unit
 
-suspend fun dowload(context: Context, response: Response<ResponseBody>,block:DowloadBuild.()->Unit):DowloadBuild{
-    val build = DowloadBuild(context, response)
+suspend fun download(context: Context, response: Response<ResponseBody>, block:DownloadBuilder.()->Unit):DownloadBuilder{
+    val build = DownloadBuilder(context, response)
     build.block()
     return build
 }
 
-class DowloadBuild(context: Context, val response: Response<ResponseBody>) {
+class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
     private var error: DOWLOAD_ERROR = {} //错误贺词
     private var process: DOWLOAD_PROCESS = { downloadedSize, filsLength, process -> } //进度
     private var success: DOWLOAD_SUCCESS = {} //下载完成
-    private val context: Context = context.applicationContext //全局context
     var setUri: () -> Uri? = { null } //设置下载的uri
     var setFileName: () -> String? = { null } //设置文件名
 
@@ -47,7 +46,7 @@ class DowloadBuild(context: Context, val response: Response<ResponseBody>) {
         this.success = success
     }
 
-    suspend fun startDowload() {
+    suspend fun startDownload() {
 
         withContext(Dispatchers.Main){
             //使用流获取下载进度
@@ -61,20 +60,18 @@ class DowloadBuild(context: Context, val response: Response<ResponseBody>) {
                 }
         }
     }
-    val flow = flow<DowloadStatus> {
+    private val flow = flow {
         try {
             val body = response.body() ?: throw RuntimeException("下载出错")
             //文件总长度
             val length = body.contentLength()
-            //文件minetype
+            //文件 mineType
             val contentType = body.contentType()?.toString()
             val ios = body.byteStream()
-            //var uri: Uri? = null
+
             var file: File? = null
             val ops = kotlin.run {
                 setUri()?.let {
-                    //url转OutPutStream
-                    //uri = it
                     context.contentResolver.openOutputStream(it)
                 } ?: kotlin.run {
                     val fileName = setFileName() ?: kotlin.run {
@@ -88,15 +85,14 @@ class DowloadBuild(context: Context, val response: Response<ResponseBody>) {
                 }
             }
             //下载的长度
-            var currentLength: Int = 0
+            var currentLength = 0
             //写入文件
             val bufferSize = 1024 * 8
             val buffer = ByteArray(bufferSize)
             val bufferedInputStream = BufferedInputStream(ios, bufferSize)
-            var readLength: Int = 0
-            while (bufferedInputStream.read(buffer, 0, bufferSize)
-                    .also { readLength = it } != -1
-            ) {
+
+            var readLength: Int
+            while (bufferedInputStream.read(buffer, 0, bufferSize).also { readLength = it } != -1) {
                 ops.write(buffer, 0, readLength)
                 currentLength += readLength
                 emit(DowloadStatus.DowloadProcess(currentLength.toLong(),length,currentLength.toFloat() / length.toFloat()))
@@ -104,10 +100,6 @@ class DowloadBuild(context: Context, val response: Response<ResponseBody>) {
             bufferedInputStream.close()
             ops.close()
             ios.close()
-//            if (uri != null) {
-//                emit(DowloadStatus.DowloadSuccess(uri!!))
-//            } else if (file != null) {
-//            }
             emit(DowloadStatus.DowloadSuccess(file!!))
 
         } catch (e: Exception) {

@@ -43,14 +43,14 @@ class NetworkViewModel : ViewModel() {
     fun downloadApk(context: Context, name: String, url: String) {
         viewModelScope.launch {
             val response = downloadService.downloadFile(url)
-            dowload(context, response) {
+            download(context, response) {
                 success {
                     _stateFlow.value = it
                 }
                 error {
                     Log.e("NetworkViewModel", "download error: $it")
                 }
-            }.startDowload()
+            }.startDownload()
         }
     }
 
