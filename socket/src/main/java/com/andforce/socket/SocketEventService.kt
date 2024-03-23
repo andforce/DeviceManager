@@ -9,9 +9,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.Uri
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.PackageManagerHelper
@@ -22,9 +20,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 /**
@@ -144,7 +140,6 @@ class SocketEventService: Service() {
                         if (actionType == PackageManagerHelper.ACTION_TYPE_UNINSTALL) {
                             Log.d(TAG, "uninstall apk success: $success")
                         }
-                        Log.d(TAG, "uninstall apk success: $success")
                     }
                     helper.deletePackage(it.packageName)
                 }
@@ -156,13 +151,8 @@ class SocketEventService: Service() {
                 val helper = PackageManagerHelper(applicationContext)
                 helper.registerListener { actionType, success ->
                     if (actionType == PackageManagerHelper.ACTION_TYPE_INSTALL) {
-                        if (success) {
-                            Toast.makeText(applicationContext, "install apk success", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(applicationContext, "install apk failed", Toast.LENGTH_SHORT).show()
-                        }
+                        Log.d(TAG, "install apk success: $success")
                     }
-                    Log.d(TAG, "install apk success: $success")
                 }
                 helper.installPackage(it)
             }
