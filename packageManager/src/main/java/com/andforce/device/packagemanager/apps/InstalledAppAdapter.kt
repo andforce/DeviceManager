@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.andforce.device.packagemanager.R
 
@@ -39,7 +39,7 @@ class InstalledAppAdapter(val context: Context): RecyclerView.Adapter<InstalledA
 
     override fun onBindViewHolder(holder: InstalledAppViewHolder, position: Int) {
         val appBean = data[position]
-        val appIcon = holder.itemView.findViewById<AppCompatImageView>(R.id.iv_app_icon)
+        val appIcon = holder.itemView.findViewById<ImageView>(R.id.iv_app_icon)
         appIcon.setImageDrawable(appBean.icon)
         val appName = holder.itemView.findViewById<TextView>(R.id.tv_app_name)
         appName.text = appBean.appName
