@@ -1,7 +1,6 @@
 package com.andforce.device.packagemanager.apps
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,32 +13,22 @@ import java.io.File
 
 class PackageManagerViewModel: ViewModel()  {
     private val _installedApps = MutableLiveData<List<AppBean>>()
-    val installedApps: LiveData<List<AppBean>> get() = _installedApps
+    val installedAppsLiveData: LiveData<List<AppBean>> = _installedApps
 
     private val _uninstallSuccess = MutableLiveData<Boolean>()
-    val uninstallSuccess: LiveData<Boolean> get() = _uninstallSuccess
+    val uninstallSuccess: LiveData<Boolean> = _uninstallSuccess
 
     private val _installSuccess = MutableLiveData<Boolean>()
-    val installSuccess: LiveData<Boolean> get() = _installSuccess
+    val installSuccess: LiveData<Boolean> = _installSuccess
+
 
     fun loadInstalledApps(context: Context) {
         viewModelScope.launch {
-            val list = mutableListOf<AppBean>()
-
             withContext(Dispatchers.IO) {
-                // 使用协程加载应用列表
-                val pm = context.packageManager
-                val apps = pm.getInstalledPackages(0)
-
-                for (app in apps) {
-                    val isSystem = app.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM != 0
-                    val packageName = app.packageName
-                    val appName = app.applicationInfo.loadLabel(pm).toString()
-                    val icon = app.applicationInfo.loadIcon(pm)
-                    list.add(AppBean(isSystem, packageName, appName, icon))
-                }
+                val packageManagerHelper = PackageManagerHelper(context)
+                val apps = packageManagerHelper.installedApps.filter { it.packageName != "com.andforce.device.manager" }
+                _installedApps.postValue(apps)
             }
-            _installedApps.value = list.filter { it.packageName != "com.andforce.device.manager" }
         }
     }
 
@@ -75,5 +64,3 @@ class PackageManagerViewModel: ViewModel()  {
         }
     }
 }
-
-data class AppBean(val isSystem: Boolean, val packageName: String, val appName: String, val icon: Drawable)

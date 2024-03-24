@@ -83,8 +83,14 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
+        packageManagerViewModel.uninstallSuccess.observe(this) {
+            packageManagerViewModel.loadInstalledApps(this.applicationContext)
+        }
+        packageManagerViewModel.installSuccess.observe(this) {
+            packageManagerViewModel.loadInstalledApps(this.applicationContext)
+        }
         // Load本机应用
-        packageManagerViewModel.installedApps.observe(this) { it ->
+        packageManagerViewModel.installedAppsLiveData.observe(this) { it ->
             installedAppAdapter.setData(it)
             val appInfo = it.filter { !it.isSystem }.map { appBean ->
                 AppInfo(
@@ -93,9 +99,8 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             networkViewModel.uploadAppInfoList(appInfo)
-        }.also {
-            packageManagerViewModel.loadInstalledApps(this.applicationContext)
         }
+        packageManagerViewModel.loadInstalledApps(this.applicationContext)
 
         mediaProjectionRequestViewModel.permissionResult.observe(this) {
             when (it) {

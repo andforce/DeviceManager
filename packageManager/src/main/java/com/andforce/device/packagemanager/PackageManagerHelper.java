@@ -11,11 +11,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.andforce.device.packagemanager.apps.AppBean;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -186,6 +189,20 @@ public class PackageManagerHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<AppBean> getInstalledApps() {
+        List<AppBean> list = new java.util.ArrayList<>();
+        List<android.content.pm.PackageInfo> apps = mPackageManager.getInstalledPackages(0);
+
+        for (android.content.pm.PackageInfo app : apps) {
+            boolean isSystem = (app.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0;
+            String packageName = app.packageName;
+            String appName = app.applicationInfo.loadLabel(mPackageManager).toString();
+            android.graphics.drawable.Drawable icon = app.applicationInfo.loadIcon(mPackageManager);
+            list.add(new AppBean(isSystem, packageName, appName, icon));
+        }
+        return list;
     }
 
     private static class LocalIntentReceiver {
