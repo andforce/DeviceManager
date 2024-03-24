@@ -31,7 +31,7 @@ class NetworkViewModel : ViewModel() {
         .build()
     private val downloadService2 = retrofit2.create(ApiService::class.java)
 
-    fun postAppInfo(url: String, appInfo: List<AppInfo>) {
+    fun uploadAppInfoList(appInfo: List<AppInfo>) {
         viewModelScope.launch {
             val response = downloadService2.postAppInfo(appInfo)
             Log.d("NetworkViewModel", "postAppInfo response: $response")

@@ -1,4 +1,4 @@
-package com.andforce.network
+package com.andforce.network.download
 
 import android.content.Context
 import android.util.Log

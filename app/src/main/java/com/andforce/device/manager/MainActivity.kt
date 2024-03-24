@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andforce.device.manager.databinding.ActivityMainBinding
@@ -17,7 +16,6 @@ import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
-import com.andforce.network.ApiService
 import com.andforce.network.AppInfo
 import com.andforce.network.NetworkViewModel
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
@@ -89,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     appBean.packageName
                 )
             }
-            networkViewModel.postAppInfo("http://10.66.32.51:3001", appInfo)
+            networkViewModel.uploadAppInfoList(appInfo)
         }.also {
             packageManagerViewModel.loadInstalledApps(this.applicationContext)
         }

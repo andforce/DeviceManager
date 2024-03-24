@@ -1,4 +1,4 @@
-package com.andforce.network
+package com.andforce.network.download
 
 import android.content.Context
 import android.net.Uri
@@ -21,7 +21,7 @@ typealias DOWLOAD_ERROR = (Throwable) -> Unit
 typealias DOWLOAD_PROCESS = (downloadedSize: Long, length: Long, process: Float) -> Unit
 typealias DOWLOAD_SUCCESS = (uri: File) -> Unit
 
-suspend fun download(context: Context, response: Response<ResponseBody>, block:DownloadBuilder.()->Unit):DownloadBuilder{
+suspend fun download(context: Context, response: Response<ResponseBody>, block: DownloadBuilder.()->Unit): DownloadBuilder {
     val build = DownloadBuilder(context, response)
     build.block()
     return build
@@ -95,7 +95,13 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
             while (bufferedInputStream.read(buffer, 0, bufferSize).also { readLength = it } != -1) {
                 ops.write(buffer, 0, readLength)
                 currentLength += readLength
-                emit(DowloadStatus.DowloadProcess(currentLength.toLong(),length,currentLength.toFloat() / length.toFloat()))
+                emit(
+                    DowloadStatus.DowloadProcess(
+                        currentLength.toLong(),
+                        length,
+                        currentLength.toFloat() / length.toFloat()
+                    )
+                )
             }
             bufferedInputStream.close()
             ops.close()
@@ -112,7 +118,7 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
 }
 
 sealed class DowloadStatus{
-    class DowloadProcess(val currentLength:Long,val length:Long,val process:Float):DowloadStatus()
-    class DowloadErron(val t:Throwable):DowloadStatus()
-    class DowloadSuccess(val uri:File):DowloadStatus()
+    class DowloadProcess(val currentLength:Long,val length:Long,val process:Float): DowloadStatus()
+    class DowloadErron(val t:Throwable): DowloadStatus()
+    class DowloadSuccess(val uri:File): DowloadStatus()
 }

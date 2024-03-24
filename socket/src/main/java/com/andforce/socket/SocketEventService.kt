@@ -10,7 +10,7 @@ import android.util.Log
 import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.PackageManagerHelper
-import com.andforce.network.DownloaderViewModel
+import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi

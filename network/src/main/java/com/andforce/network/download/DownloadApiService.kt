@@ -1,4 +1,4 @@
-package com.andforce.network
+package com.andforce.network.download
 
 import okhttp3.ResponseBody
 import retrofit2.Response
