@@ -14,3 +14,7 @@ build
 
 node_modules
 upload/*
+
+www/.DS_Store
+www/uploads/*
+
