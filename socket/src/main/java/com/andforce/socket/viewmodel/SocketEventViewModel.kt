@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,15 +28,15 @@ class SocketEventViewModel : ViewModel() {
 //    private var socketUrl: String = "http://10.66.50.84:3001"
 //    private var socketUrl: String = "http://192.168.8.90:3001"
 
-    private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0)
+    private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
 
     // apk file push event
-    private val _apkFilePushEventFlow = MutableStateFlow<ApkPushEvent?>(null)
-    val apkFilePushEventFlow: Flow<ApkPushEvent?> = _apkFilePushEventFlow
+    private val _apkFilePushEventFlow = MutableSharedFlow<ApkPushEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val apkFilePushEventFlow: SharedFlow<ApkPushEvent?> = _apkFilePushEventFlow
 
-    private val _apkUninstallEventFlow = MutableStateFlow<ApkUninstallEvent?>(null)
-    val apkUninstallEventFlow: Flow<ApkUninstallEvent?> = _apkUninstallEventFlow
+    private val _apkUninstallEventFlow = MutableSharedFlow<ApkUninstallEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val apkUninstallEventFlow: SharedFlow<ApkUninstallEvent?> = _apkUninstallEventFlow
 
     // mouse event
     private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
