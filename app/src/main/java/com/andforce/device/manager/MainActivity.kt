@@ -26,6 +26,7 @@ import com.andforce.screen.cast.listener.RecordState
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import com.andforce.socket.mouseevent.SocketStatusListener
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -184,15 +185,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         lifecycleScope.launch {
-            socketEventViewModel.mouseMoveEventFlow.collect {
-                updateMouseEventInfo(it)
-            }
-        }
-
-        lifecycleScope.launch {
-            socketEventViewModel.mouseEventFlow.collect {
+            merge(
+                socketEventViewModel.mouseMoveEventFlow,
+                socketEventViewModel.mouseEventFlow
+            ).collect {
                 updateMouseEventInfo(it)
             }
         }
