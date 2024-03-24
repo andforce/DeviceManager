@@ -9,7 +9,7 @@ import android.net.NetworkRequest
 import android.util.Log
 import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.applock.AvoidList
-import com.andforce.device.packagemanager.PackageManagerHelper
+import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
@@ -32,6 +32,7 @@ class SocketEventService: Service() {
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val downloaderViewModel: DownloaderViewModel by inject()
     private val recordViewModel: RecordViewModel by inject()
+    private val packageManagerViewModel: PackageManagerViewModel by inject()
 
     private var capturedImageJob: Job? = null
     private var appUninstallJob: Job? = null
@@ -115,26 +116,14 @@ class SocketEventService: Service() {
             socketEventViewModel.apkUninstallEventFlow.collect(){
                 Log.d(TAG, "collect ApkUninstallEvent: $it")
                 it?.let {
-                    val helper = PackageManagerHelper(applicationContext)
-                    helper.registerListener { actionType, success ->
-                        if (actionType == PackageManagerHelper.ACTION_TYPE_UNINSTALL) {
-                            Log.d(TAG, "uninstall apk success: $success")
-                        }
-                    }
-                    helper.deletePackage(it.packageName)
+                    packageManagerViewModel.uninstallApp(applicationContext, it.packageName)
                 }
             }
         }
         apkDownloadJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
             downloaderViewModel.fileDownloadStateFlow.collect {
-                val helper = PackageManagerHelper(applicationContext)
-                helper.registerListener { actionType, success ->
-                    if (actionType == PackageManagerHelper.ACTION_TYPE_INSTALL) {
-                        Log.d(TAG, "install apk success: $success")
-                    }
-                }
-                helper.installPackage(it)
+                packageManagerViewModel.installApp(applicationContext, it)
             }
         }
     }

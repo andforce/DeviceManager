@@ -10,10 +10,17 @@ import com.andforce.device.packagemanager.PackageManagerHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class PackageManagerViewModel: ViewModel()  {
     private val _installedApps = MutableLiveData<List<AppBean>>()
     val installedApps: LiveData<List<AppBean>> get() = _installedApps
+
+    private val _uninstallSuccess = MutableLiveData<Boolean>()
+    val uninstallSuccess: LiveData<Boolean> get() = _uninstallSuccess
+
+    private val _installSuccess = MutableLiveData<Boolean>()
+    val installSuccess: LiveData<Boolean> get() = _installSuccess
 
     fun loadInstalledApps(context: Context) {
         viewModelScope.launch {
@@ -36,13 +43,34 @@ class PackageManagerViewModel: ViewModel()  {
         }
     }
 
-    fun uninstallApp(applicationContext: Context, appBean: AppBean) {
-        val helper = PackageManagerHelper(applicationContext).also {
-            it.deletePackage(appBean.packageName)
+    fun uninstallApp(applicationContext: Context, packageName: String) {
+        viewModelScope.launch {
+            val helper = PackageManagerHelper(applicationContext).also {
+                it.deletePackage(packageName)
+            }
+            helper.registerListener { actionType, success ->
+                if (actionType == PackageManagerHelper.ACTION_TYPE_UNINSTALL) {
+                    if (success) {
+                        loadInstalledApps(applicationContext)
+                    }
+                    _uninstallSuccess.postValue(success)
+                }
+            }
         }
-        helper.registerListener { actionType, success ->
-            if (actionType == PackageManagerHelper.ACTION_TYPE_UNINSTALL && success) {
-                loadInstalledApps(applicationContext)
+    }
+
+    fun installApp(applicationContext: Context, packageName: File) {
+        viewModelScope.launch {
+            val helper = PackageManagerHelper(applicationContext).also {
+                it.installPackage(packageName)
+            }
+            helper.registerListener { actionType, success ->
+                if (actionType == PackageManagerHelper.ACTION_TYPE_INSTALL) {
+                    if (success) {
+                        loadInstalledApps(applicationContext)
+                    }
+                    _installSuccess.postValue(success)
+                }
             }
         }
     }

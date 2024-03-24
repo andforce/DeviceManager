@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         viewBinding.rvList.adapter = installedAppAdapter.also {
             it.setOnUninstallClickListener(object : OnUninstallClickListener {
                 override fun onUninstallClick(appBean: AppBean) {
-                    packageManagerViewModel.uninstallApp(applicationContext, appBean)
+                    packageManagerViewModel.uninstallApp(applicationContext, appBean.packageName)
                 }
             })
         }
