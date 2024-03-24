@@ -1,19 +1,16 @@
 package com.andforce.socket
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.net.Uri
 import android.util.Log
 import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.PackageManagerHelper
-import com.andforce.network.NetworkViewModel
+import com.andforce.network.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -33,7 +30,7 @@ class SocketEventService: Service() {
     }
 
     private val socketEventViewModel: SocketEventViewModel by inject()
-    private val downloaderViewModel: NetworkViewModel by inject()
+    private val downloaderViewModel: DownloaderViewModel by inject()
     private val recordViewModel: RecordViewModel by inject()
 
     private var capturedImageJob: Job? = null
@@ -69,23 +66,6 @@ class SocketEventService: Service() {
         }
     }
 
-//    private fun isNetworkAvailable(): Boolean {
-//        val network = connectivityManager.activeNetwork
-//        val capabilities = connectivityManager.getNetworkCapabilities(network)
-//        return capabilities != null
-//    }
-
-    fun isBrowserApp(context: Context, packageName: String): Boolean {
-        val packageManager = context.packageManager
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com"))
-        val activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-        for (info in activities) {
-            if (info.activityInfo.packageName == packageName) {
-                return true
-            }
-        }
-        return false
-    }
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()

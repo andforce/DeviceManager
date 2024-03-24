@@ -3,6 +3,7 @@ package com.andforce.device.manager
 import android.app.Application
 import com.andforce.network.NetworkViewModel
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
+import com.andforce.network.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.RecordViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import org.koin.android.ext.koin.androidContext
@@ -21,6 +22,7 @@ class App : Application() {
             single { SocketEventViewModel() }
             single { PackageManagerViewModel() }
             single { NetworkViewModel() }
+            single { DownloaderViewModel() }
         }
 
         startKoin {
