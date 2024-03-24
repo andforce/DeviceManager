@@ -12,6 +12,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -23,6 +24,7 @@ class SystemAutoTouchService: Service() {
     private val socketEventViewModel: SocketEventViewModel by inject()
 
     private var socketEventJob: Job? = null
+    private var socketMoveEventJob: Job? = null
 
     private val injectEventHelper = InjectEventHelper.getInstance()
     @OptIn(DelicateCoroutinesApi::class)
@@ -31,35 +33,49 @@ class SystemAutoTouchService: Service() {
 
         Log.d(TAG, "onCreate")
 
-        socketEventJob = GlobalScope.launch {
-
-            socketEventViewModel.mouseEventFlow.buffer(capacity = 1024).collect {
-
+        socketMoveEventJob = GlobalScope.launch {
+            socketEventViewModel.mouseMoveEventFlow.collect() {
                 if (!AutoTouchManager.isAccessibility) {
                     it?.let {
-                        Log.i(TAG, "collect MouseEvent: $it")
-
-                        val screenW = ScreenUtils.metrics(this@SystemAutoTouchService).widthPixels
-                        val screenH = ScreenUtils.metrics(this@SystemAutoTouchService).heightPixels
-
-                        val scaleW = screenW / it.remoteWidth.toFloat()
-                        val scaleH = screenH / it.remoteHeight.toFloat()
-                        val fromRealX = if (it.x * scaleW < 0) 0f else it.x * scaleW
-                        val fromRealY = if (it.y * scaleH < 0) 0f else it.y * scaleH
-
-                        when (it) {
-                            is MouseEvent.Down -> {
-                                injectEventHelper.injectTouchDownSystem(fromRealX,fromRealY)
-                            }
-                            is MouseEvent.Move -> {
-                                injectEventHelper.injectTouchMoveSystem(fromRealX,fromRealY)
-                            }
-                            is MouseEvent.Up -> {
-                                injectEventHelper.injectTouchUpSystem(fromRealX,fromRealY)
-                            }
-                        }
+                        injectEvent(it)
                     }
                 }
+            }
+        }
+
+        socketEventJob = GlobalScope.launch {
+            socketEventViewModel.mouseEventFlow.buffer(capacity = 1024).collect {
+                if (!AutoTouchManager.isAccessibility) {
+                    it?.let {
+                        injectEvent(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun injectEvent(it: MouseEvent) {
+        Log.i(TAG, "collect MouseEvent: $it")
+
+        val screenW = ScreenUtils.metrics(this@SystemAutoTouchService).widthPixels
+        val screenH = ScreenUtils.metrics(this@SystemAutoTouchService).heightPixels
+
+        val scaleW = screenW / it.remoteWidth.toFloat()
+        val scaleH = screenH / it.remoteHeight.toFloat()
+        val fromRealX = if (it.x * scaleW < 0) 0f else it.x * scaleW
+        val fromRealY = if (it.y * scaleH < 0) 0f else it.y * scaleH
+
+        when (it) {
+            is MouseEvent.Down -> {
+                injectEventHelper.injectTouchDownSystem(fromRealX, fromRealY)
+            }
+
+            is MouseEvent.Move -> {
+                injectEventHelper.injectTouchMoveSystem(fromRealX, fromRealY)
+            }
+
+            is MouseEvent.Up -> {
+                injectEventHelper.injectTouchUpSystem(fromRealX, fromRealY)
             }
         }
     }
@@ -71,6 +87,7 @@ class SystemAutoTouchService: Service() {
     override fun onDestroy() {
         super.onDestroy()
         socketEventJob?.cancel()
+        socketMoveEventJob?.cancel()
         Log.d(TAG, "onStartCommand")
     }
 

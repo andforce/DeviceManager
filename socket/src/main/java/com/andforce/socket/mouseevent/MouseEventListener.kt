@@ -3,10 +3,13 @@ package com.andforce.socket.mouseevent
 import com.andforce.socket.apkevent.ApkPushEvent
 import com.andforce.socket.apkevent.ApkUninstallEvent
 
+interface MouseMoveEventListener {
+    fun onMove(mouseEvent: MouseEvent)
+}
+
 interface MouseEventListener {
 
     fun onDown(mouseEvent: MouseEvent)
-    fun onMove(mouseEvent: MouseEvent)
     fun onUp(mouseEvent: MouseEvent)
 }
 

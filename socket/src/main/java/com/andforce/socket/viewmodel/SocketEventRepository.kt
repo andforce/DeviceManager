@@ -7,6 +7,7 @@ import com.andforce.socket.mouseevent.MouseEventListener
 import com.andforce.socket.SocketClient
 import com.andforce.socket.apkevent.ApkUninstallEvent
 import com.andforce.socket.mouseevent.ApkUninstallListener
+import com.andforce.socket.mouseevent.MouseMoveEventListener
 import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -24,14 +25,23 @@ class SocketEventRepository {
             override fun onUp(mouseEvent: MouseEvent) {
                 trySend(mouseEvent)
             }
+        }
+        socketClient.registerMouseEventListener(listener)
+        awaitClose {
+            socketClient.unRegisterMouseEventListener()
+        }
+    }
+
+    suspend fun listenMouseMoveEventFromSocket(socketClient: SocketClient): Flow<MouseEvent> = callbackFlow {
+        val listener = object : MouseMoveEventListener {
 
             override fun onMove(mouseEvent: MouseEvent) {
                 trySend(mouseEvent)
             }
         }
-        socketClient.registerMouseEventListener(listener)
+        socketClient.registerMouseMoveEventListener(listener)
         awaitClose {
-            socketClient.unRegisterMouseEventListener()
+            socketClient.unregisterMouseMoveEventListener()
         }
     }
 

@@ -185,6 +185,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
+            socketEventViewModel.mouseMoveEventFlow.collect {
+                it?.let {
+                    when (it) {
+                        is MouseEvent.Down -> {
+                            viewBinding.mouseEvent.text = "鼠标事件: MouseDown"
+                        }
+                        is MouseEvent.Move -> {
+                            viewBinding.mouseEvent.text = "鼠标事件: MouseMove"
+                        }
+                        is MouseEvent.Up -> {
+                            viewBinding.mouseEvent.text = "鼠标事件: MouseUp"
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
             socketEventViewModel.mouseEventFlow.collect {
                 it?.let {
                     when (it) {

@@ -7,6 +7,7 @@ import com.andforce.socket.mouseevent.ApkEventListener
 import com.andforce.socket.mouseevent.ApkUninstallListener
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.mouseevent.MouseEventListener
+import com.andforce.socket.mouseevent.MouseMoveEventListener
 import com.andforce.socket.mouseevent.SocketStatusListener
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -17,9 +18,26 @@ class SocketClient(private val url: String) {
     private var socket: Socket? = null
 
     private var mouseEventListener: MouseEventListener? = null
+    private var mouseMoveEventListener: MouseMoveEventListener? = null
+
     private var apkEventListener: ApkEventListener? = null
     private var apkUninstallListener: ApkUninstallListener? = null
     private var socketStatusListener: SocketStatusListener? = null
+
+    fun registerMouseMoveEventListener(listener: MouseMoveEventListener) {
+        mouseMoveEventListener = listener
+    }
+
+    fun unregisterMouseMoveEventListener() {
+        mouseMoveEventListener = null
+    }
+
+    fun registerMouseEventListener(listener: MouseEventListener) {
+        mouseEventListener = listener
+    }
+    fun unRegisterMouseEventListener() {
+        mouseEventListener = null
+    }
 
     fun registerApkUninstallListener(listener: ApkUninstallListener) {
         apkUninstallListener = listener
@@ -36,16 +54,10 @@ class SocketClient(private val url: String) {
     fun unregisterSocketStatusListener() {
         this.socketStatusListener = null
     }
-    fun registerMouseEventListener(listener: MouseEventListener) {
-        mouseEventListener = listener
-    }
     fun registerApkEventListener(listener: ApkEventListener) {
         apkEventListener = listener
     }
 
-    fun unRegisterMouseEventListener() {
-        mouseEventListener = null
-    }
     fun unRegisterApkEventListener() {
         apkEventListener = null
     }
@@ -105,7 +117,7 @@ class SocketClient(private val url: String) {
             Log.d("SocketClient", "mousemove" + args[0].toString())
             val data = args[0] as JSONObject
             val down = MouseEvent.Move(3, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
-            mouseEventListener?.onMove(down)
+            mouseMoveEventListener?.onMove(down)
         })
 
         socket?.on("apk-upload", Emitter.Listener { args ->

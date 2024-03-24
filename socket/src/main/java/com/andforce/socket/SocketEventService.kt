@@ -50,6 +50,8 @@ class SocketEventService: Service() {
             // 网络可用时调用
             socketEventViewModel.connectIfNeed()
             socketEventViewModel.listenMouseEventFromSocket()
+            socketEventViewModel.listenMouseMoveEventFromSocket()
+
             socketEventViewModel.listenApkFilePushEvent()
             socketEventViewModel.listenApkUninstallEvent()
             socketEventViewModel.listenSocketStatus()
@@ -147,6 +149,8 @@ class SocketEventService: Service() {
 
         socketEventViewModel.connectIfNeed()
         socketEventViewModel.listenMouseEventFromSocket()
+        socketEventViewModel.listenMouseMoveEventFromSocket()
+
         socketEventViewModel.listenApkFilePushEvent()
         socketEventViewModel.listenApkUninstallEvent()
 

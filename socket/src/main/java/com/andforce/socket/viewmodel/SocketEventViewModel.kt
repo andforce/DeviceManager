@@ -9,6 +9,7 @@ import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.SocketClient
 import com.andforce.socket.apkevent.ApkUninstallEvent
 import com.andforce.socket.mouseevent.SocketStatusListener
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +41,9 @@ class SocketEventViewModel : ViewModel() {
     private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
     var mouseEventFlow: SharedFlow<MouseEvent?> = _mouseEventFlow
 
+    private val _mouseMoveEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    var mouseMoveEventFlow: SharedFlow<MouseEvent?> = _mouseMoveEventFlow
+
     fun connectIfNeed() {
 
         if (socketClient == null) {
@@ -61,8 +65,18 @@ class SocketEventViewModel : ViewModel() {
     fun listenMouseEventFromSocket() {
         viewModelScope.launch {
             socketClient?.let {
-                socketEventRepository.listenMouseEventFromSocket(it).buffer(1024).collect { mouseEvent->
+                socketEventRepository.listenMouseEventFromSocket(it).collect { mouseEvent->
                     _mouseEventFlow.emit(mouseEvent)
+                }
+            }
+        }
+    }
+
+    fun listenMouseMoveEventFromSocket() {
+        viewModelScope.launch {
+            socketClient?.let {
+                socketEventRepository.listenMouseMoveEventFromSocket(it).collect { mouseEvent->
+                    _mouseMoveEventFlow.emit(mouseEvent)
                 }
             }
         }
