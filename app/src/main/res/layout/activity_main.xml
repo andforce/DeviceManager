@@ -41,6 +41,13 @@
         android:text="APK信息：空"
         tools:ignore="HardcodedText" />
 
+    <TextView
+        android:id="@+id/apk_info_download_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="APK下载进度: 0%"
+        tools:ignore="HardcodedText" />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

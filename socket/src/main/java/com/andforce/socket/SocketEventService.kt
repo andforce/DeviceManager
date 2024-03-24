@@ -106,7 +106,7 @@ class SocketEventService: Service() {
             socketEventViewModel.apkFilePushEventFlow.collect {
                 Log.d(TAG, "collect ApkEvent: $it")
                 it?.let {
-                    downloaderViewModel.downloadApk(applicationContext, it.name, it.path)
+                    downloaderViewModel.downloadApk(applicationContext, it.path)
                 }
             }
         }

@@ -18,6 +18,7 @@ import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.AppInfo
 import com.andforce.network.NetworkViewModel
+import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.RecordViewModel
@@ -48,12 +49,16 @@ class MainActivity : AppCompatActivity() {
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
     private val networkViewModel: NetworkViewModel by inject()
+    private val downloaderViewModel: DownloaderViewModel by inject()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
 
+        downloaderViewModel.downloadProcessFlow.observe(this) {
+            viewBinding.apkInfoDownloadProgress.text = "APK下载进度: ${it * 100}%"
+        }
 
         // 启动Socket
         val intent = Intent("ACTION_SOCKET_EVENT_SERVICE").apply {
@@ -170,7 +175,7 @@ class MainActivity : AppCompatActivity() {
 
         socketEventViewModel.apkFilePushEventFlow.asLiveData().observe(this@MainActivity) {
             it?.let {
-                viewBinding.apkInfo.text = "APK事件: ${it.name} ${it.path}"
+                viewBinding.apkInfo.text = "APK事件: ${it.path}"
             }
         }
 

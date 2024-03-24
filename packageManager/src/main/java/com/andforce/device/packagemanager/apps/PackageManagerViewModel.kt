@@ -32,7 +32,7 @@ class PackageManagerViewModel: ViewModel()  {
                     list.add(AppBean(isSystem, packageName, appName, icon))
                 }
             }
-            _installedApps.value = list
+            _installedApps.value = list.filter { it.packageName != "com.andforce.device.manager" }
         }
     }
 
