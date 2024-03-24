@@ -14,12 +14,9 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * Created by jingzz on 2020/7/9.
- */
-typealias DOWLOAD_ERROR = (Throwable) -> Unit
-typealias DOWLOAD_PROCESS = (downloadedSize: Long, length: Long, process: Float) -> Unit
-typealias DOWLOAD_SUCCESS = (uri: File) -> Unit
+typealias DOWNLOAD_ERROR = (Throwable) -> Unit
+typealias DOWNLOAD_PROCESS = (downloadedSize: Long, length: Long, process: Float) -> Unit
+typealias DOWNLOAD_SUCCESS = (uri: File) -> Unit
 
 suspend fun download(context: Context, response: Response<ResponseBody>, block: DownloadBuilder.()->Unit): DownloadBuilder {
     val build = DownloadBuilder(context, response)
@@ -28,21 +25,21 @@ suspend fun download(context: Context, response: Response<ResponseBody>, block: 
 }
 
 class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
-    private var error: DOWLOAD_ERROR = {} //错误贺词
-    private var process: DOWLOAD_PROCESS = { downloadedSize, filsLength, process -> } //进度
-    private var success: DOWLOAD_SUCCESS = {} //下载完成
+    private var error: DOWNLOAD_ERROR = {} //错误贺词
+    private var process: DOWNLOAD_PROCESS = { downloadedSize, filsLength, process -> } //进度
+    private var success: DOWNLOAD_SUCCESS = {} //下载完成
     var setUri: () -> Uri? = { null } //设置下载的uri
     var setFileName: () -> String? = { null } //设置文件名
 
-    fun process(process: DOWLOAD_PROCESS) {
+    fun process(process: DOWNLOAD_PROCESS) {
         this.process = process
     }
 
-    fun error(error: DOWLOAD_ERROR) {
+    fun error(error: DOWNLOAD_ERROR) {
         this.error = error
     }
 
-    fun success(success: DOWLOAD_SUCCESS) {
+    fun success(success: DOWNLOAD_SUCCESS) {
         this.success = success
     }
 
@@ -53,9 +50,9 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
             flow.flowOn(Dispatchers.IO)
                 .collect {
                     when(it){
-                        is DowloadStatus.DowloadErron -> error(it.t)
-                        is DowloadStatus.DowloadProcess -> process(it.currentLength,it.length,it.process)
-                        is DowloadStatus.DowloadSuccess -> success(it.uri)
+                        is DownloadStatus.DownloadErron -> error(it.t)
+                        is DownloadStatus.DownloadProcess -> process(it.currentLength,it.length,it.process)
+                        is DownloadStatus.DownloadSuccess -> success(it.uri)
                     }
                 }
         }
@@ -96,7 +93,7 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
                 ops.write(buffer, 0, readLength)
                 currentLength += readLength
                 emit(
-                    DowloadStatus.DowloadProcess(
+                    DownloadStatus.DownloadProcess(
                         currentLength.toLong(),
                         length,
                         currentLength.toFloat() / length.toFloat()
@@ -106,10 +103,10 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
             bufferedInputStream.close()
             ops.close()
             ios.close()
-            emit(DowloadStatus.DowloadSuccess(file!!))
+            emit(DownloadStatus.DownloadSuccess(file!!))
 
         } catch (e: Exception) {
-            emit(DowloadStatus.DowloadErron(e))
+            emit(DownloadStatus.DownloadErron(e))
         }
     }
 
@@ -117,8 +114,8 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
 
 }
 
-sealed class DowloadStatus{
-    class DowloadProcess(val currentLength:Long,val length:Long,val process:Float): DowloadStatus()
-    class DowloadErron(val t:Throwable): DowloadStatus()
-    class DowloadSuccess(val uri:File): DowloadStatus()
+sealed class DownloadStatus{
+    class DownloadProcess(val currentLength:Long, val length:Long, val process:Float): DownloadStatus()
+    class DownloadErron(val t:Throwable): DownloadStatus()
+    class DownloadSuccess(val uri:File): DownloadStatus()
 }
