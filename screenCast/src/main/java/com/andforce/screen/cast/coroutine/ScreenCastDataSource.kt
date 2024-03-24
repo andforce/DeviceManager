@@ -1,7 +1,6 @@
 package com.andforce.screen.cast.coroutine
 
 import android.content.Context
-import android.media.Image
 import android.media.projection.MediaProjection
 import android.util.DisplayMetrics
 import android.util.Log
@@ -14,14 +13,13 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 
 // https://www.jianshu.com/p/281093cabbc7
 // https://www.jianshu.com/p/e73863ae9ae9
 
-class RecordDataSource {
+class ScreenCastDataSource {
     private var virtualDisplayImageReader: VirtualDisplayImageReader? = null
 
     suspend fun recordStatusFlow() = callbackFlow {

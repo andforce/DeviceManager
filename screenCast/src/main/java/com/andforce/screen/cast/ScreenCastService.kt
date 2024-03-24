@@ -12,7 +12,7 @@ import android.graphics.Color
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.util.Log
-import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import org.koin.android.ext.android.inject
 
 
@@ -20,7 +20,7 @@ class ScreenCastService: Service() {
     private var mpm: MediaProjectionManager? = null
     private var mp: MediaProjection? = null
 
-    private val recordViewModel: RecordViewModel by inject()
+    private val screenCastViewModel: ScreenCastViewModel by inject()
 
     companion object {
         const val TAG = "ScreenCastService"
@@ -78,7 +78,7 @@ class ScreenCastService: Service() {
             if (mediaProjection == null) {
                 Log.d(TAG, "onStartCommand, mediaProjection is null")
             } else {
-                recordViewModel.startCaptureImages(this, mediaProjection, 0.35f)
+                screenCastViewModel.startCaptureImages(this, mediaProjection, 0.35f)
                 Log.d(TAG, "onStartCommand, mediaProjection is $mediaProjection")
             }
         }

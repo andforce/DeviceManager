@@ -21,7 +21,7 @@ import com.andforce.network.NetworkViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
-import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import com.andforce.screen.cast.listener.RecordState
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.viewmodel.SocketEventViewModel
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val recordViewModel: RecordViewModel by inject()
+    private val screenCastViewModel: ScreenCastViewModel by inject()
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
     private val networkViewModel: NetworkViewModel by inject()
@@ -109,14 +109,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewBinding.btnStart.setOnClickListener {
-            if (recordViewModel.recordState.value is RecordState.Recording) {
+            if (screenCastViewModel.recordState.value is RecordState.Recording) {
                 Toast.makeText(this, "Recording, no need start", Toast.LENGTH_SHORT).show()
             } else {
                 mediaProjectionRequestViewModel.requestScreenCapturePermission()
             }
         }
 
-        recordViewModel.recordState.observe(this@MainActivity) {
+        screenCastViewModel.recordState.observe(this@MainActivity) {
             when (it) {
                 is RecordState.Recording -> {
                     viewBinding.btnStart.text = "结束投屏"

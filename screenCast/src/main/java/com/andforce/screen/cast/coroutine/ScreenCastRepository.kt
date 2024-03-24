@@ -4,9 +4,9 @@ import android.content.Context
 import android.media.projection.MediaProjection
 import kotlinx.coroutines.flow.Flow
 
-class RecordRepository {
+class ScreenCastRepository {
 
-    private val recordDataSource = RecordDataSource()
+    private val recordDataSource = ScreenCastDataSource()
 
     suspend fun captureBitmapFlow(context: Context, mp: MediaProjection, scale: Float): Flow<ByteArray> =
         recordDataSource.captureImageFlow(context, mp, scale)

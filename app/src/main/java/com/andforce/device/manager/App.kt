@@ -4,7 +4,7 @@ import android.app.Application
 import com.andforce.network.NetworkViewModel
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.download.DownloaderViewModel
-import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -18,7 +18,7 @@ class App : Application() {
         // 定义 Koin 模块
         val myModule = module {
             // 将 MyViewModel 定义为全局单例
-            single { RecordViewModel() }
+            single { ScreenCastViewModel() }
             single { SocketEventViewModel() }
             single { PackageManagerViewModel() }
             single { NetworkViewModel() }

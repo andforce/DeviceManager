@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.andforce.screen.cast.listener.RecordState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,9 +15,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RecordViewModel :ViewModel(){
+class ScreenCastViewModel :ViewModel(){
 
-    private val recordRepository = RecordRepository()
+    private val recordRepository = ScreenCastRepository()
 
     private val _capturedImage = MutableStateFlow<ByteArray?>(null)
     val capturedImageFlow: StateFlow<ByteArray?> get() = _capturedImage

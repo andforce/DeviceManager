@@ -11,7 +11,7 @@ import com.andforce.device.applock.AppLauncherManager
 import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.download.DownloaderViewModel
-import com.andforce.screen.cast.coroutine.RecordViewModel
+import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +31,7 @@ class SocketEventService: Service() {
 
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val downloaderViewModel: DownloaderViewModel by inject()
-    private val recordViewModel: RecordViewModel by inject()
+    private val screenCastViewModel: ScreenCastViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
 
     private var capturedImageJob: Job? = null
@@ -96,7 +96,7 @@ class SocketEventService: Service() {
 
         capturedImageJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "recordViewModel.capturedImage")
-            recordViewModel.capturedImageFlow.collect {
+            screenCastViewModel.capturedImageFlow.collect {
                 Log.i("CAPTURE", "start sendBitmapToServer")
                 socketEventViewModel.sendBitmapToServer(it)
             }
