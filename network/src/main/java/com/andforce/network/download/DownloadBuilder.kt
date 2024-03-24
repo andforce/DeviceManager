@@ -18,16 +18,22 @@ typealias DOWNLOAD_ERROR = (Throwable) -> Unit
 typealias DOWNLOAD_PROCESS = (downloadedSize: Long, length: Long, process: Float) -> Unit
 typealias DOWNLOAD_SUCCESS = (uri: File) -> Unit
 
-suspend fun download(context: Context, response: Response<ResponseBody>, block: DownloadBuilder.()->Unit): DownloadBuilder {
+suspend fun download(
+    context: Context,
+    response: Response<ResponseBody>,
+    block: DownloadBuilder.() -> Unit
+): DownloadBuilder {
     val build = DownloadBuilder(context, response)
     build.block()
     return build
 }
 
-class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
+class DownloadBuilder(context: Context, private val response: Response<ResponseBody>) {
+
     private var error: DOWNLOAD_ERROR = {} //错误贺词
     private var process: DOWNLOAD_PROCESS = { downloadedSize, filsLength, process -> } //进度
     private var success: DOWNLOAD_SUCCESS = {} //下载完成
+
     var setUri: () -> Uri? = { null } //设置下载的uri
     var setFileName: () -> String? = { null } //设置文件名
 
@@ -45,18 +51,24 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
 
     suspend fun startDownload() {
 
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             //使用流获取下载进度
             flow.flowOn(Dispatchers.IO)
                 .collect {
-                    when(it){
-                        is DownloadStatus.DownloadErron -> error(it.t)
-                        is DownloadStatus.DownloadProcess -> process(it.currentLength,it.length,it.process)
+                    when (it) {
+                        is DownloadStatus.DownloadError -> error(it.t)
+                        is DownloadStatus.DownloadProcess -> process(
+                            it.currentLength,
+                            it.length,
+                            it.process
+                        )
+
                         is DownloadStatus.DownloadSuccess -> success(it.uri)
                     }
                 }
         }
     }
+
     private val flow = flow {
         try {
             val body = response.body() ?: throw RuntimeException("下载出错")
@@ -73,8 +85,10 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
                 } ?: kotlin.run {
                     val fileName = setFileName() ?: kotlin.run {
                         //如果连文件名都不给，那就自己生成文件名
-                        "${System.currentTimeMillis()}.${MimeTypeMap.getSingleton()
-                            .getExtensionFromMimeType(contentType)}"
+                        "${System.currentTimeMillis()}.${
+                            MimeTypeMap.getSingleton()
+                                .getExtensionFromMimeType(contentType)
+                        }"
                     }
                     file =
                         File("${context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)}${File.separator}$fileName")
@@ -106,16 +120,13 @@ class DownloadBuilder(context: Context, val response: Response<ResponseBody>) {
             emit(DownloadStatus.DownloadSuccess(file!!))
 
         } catch (e: Exception) {
-            emit(DownloadStatus.DownloadErron(e))
+            emit(DownloadStatus.DownloadError(e))
         }
     }
-
-
-
 }
 
-sealed class DownloadStatus{
-    class DownloadProcess(val currentLength:Long, val length:Long, val process:Float): DownloadStatus()
-    class DownloadErron(val t:Throwable): DownloadStatus()
-    class DownloadSuccess(val uri:File): DownloadStatus()
+sealed class DownloadStatus {
+    class DownloadProcess(val currentLength: Long, val length: Long, val process: Float) : DownloadStatus()
+    class DownloadError(val t: Throwable) : DownloadStatus()
+    class DownloadSuccess(val uri: File) : DownloadStatus()
 }

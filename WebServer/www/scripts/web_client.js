@@ -30,6 +30,10 @@ Web_client.prototype = {
             var list = document.getElementById('myList');
 
             console.log('Received appinfo event', data);
+            // 清除掉列表中的所有元素
+            while (list.firstChild) {
+                list.removeChild(list.firstChild);
+            }
 
             data.forEach(function(item) {
                 var listItem = document.createElement('div');
