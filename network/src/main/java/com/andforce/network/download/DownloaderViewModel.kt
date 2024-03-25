@@ -29,10 +29,10 @@ class DownloaderViewModel : ViewModel() {
         }
         .build()
     private val retrofit = Retrofit.Builder()
-//        .baseUrl("http://10.66.50.84:3001")
+        .baseUrl("http://10.66.50.84:3001")
 //        .baseUrl("http://10.66.32.51:3001")
 //        .baseUrl("http://192.168.8.90:3001")
-        .baseUrl("http://192.168.2.183:3001")
+//        .baseUrl("http://192.168.2.183:3001")
         // 使用OKHttp下载
         .client(client)
         .build()
