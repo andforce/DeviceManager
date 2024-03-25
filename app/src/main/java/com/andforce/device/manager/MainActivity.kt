@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             merge(
                 socketEventViewModel.mouseMoveEventFlow,
-                socketEventViewModel.mouseEventFlow
+                socketEventViewModel.mouseDownUpEventFlow
             ).collect {
                 updateMouseEventInfo(it)
             }

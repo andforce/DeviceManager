@@ -12,7 +12,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -44,7 +43,7 @@ class SystemAutoTouchService: Service() {
         }
 
         socketEventJob = GlobalScope.launch {
-            socketEventViewModel.mouseEventFlow.buffer(capacity = 1024).collect {
+            socketEventViewModel.mouseDownUpEventFlow.buffer(capacity = 1024).collect {
                 if (!AutoTouchManager.isAccessibility) {
                     it?.let {
                         injectEvent(it)

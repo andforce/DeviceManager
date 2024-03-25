@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -25,19 +24,19 @@ class SocketEventViewModel : ViewModel() {
     private var socketClient: SocketClient? = null
     private var socketUrl: String = BuildConfig.HOST
 
-    private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0, extraBufferCapacity = 8, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
 
     // apk file push event
     private val _apkFilePushEventFlow = MutableStateFlow<ApkPushEvent?>(null)
     val apkFilePushEventFlow: StateFlow<ApkPushEvent?> = _apkFilePushEventFlow
 
-    private val _apkUninstallEventFlow = MutableSharedFlow<ApkUninstallEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _apkUninstallEventFlow = MutableSharedFlow<ApkUninstallEvent?>(replay = 0, extraBufferCapacity = 8, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val apkUninstallEventFlow: SharedFlow<ApkUninstallEvent?> = _apkUninstallEventFlow
 
     // mouse event
-    private val _mouseEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
-    var mouseEventFlow: SharedFlow<MouseEvent?> = _mouseEventFlow
+    private val _mouseDownUpEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0)
+    var mouseDownUpEventFlow: SharedFlow<MouseEvent?> = _mouseDownUpEventFlow
 
     private val _mouseMoveEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     var mouseMoveEventFlow: SharedFlow<MouseEvent?> = _mouseMoveEventFlow
@@ -64,7 +63,7 @@ class SocketEventViewModel : ViewModel() {
         viewModelScope.launch {
             socketClient?.let {
                 socketEventRepository.listenMouseEventFromSocket(it).collect { mouseEvent->
-                    _mouseEventFlow.emit(mouseEvent)
+                    _mouseDownUpEventFlow.emit(mouseEvent)
                 }
             }
         }
