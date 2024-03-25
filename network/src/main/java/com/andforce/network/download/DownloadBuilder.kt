@@ -14,20 +14,11 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 
-suspend fun download(
-    context: Context,
-    response: Response<ResponseBody>,
-    action: DownloadBuilder.() -> Unit
-) {
-    val build = DownloadBuilder(context, response)
-    build.action()
-    build.startDownload()
-}
-
 class DownloadBuilder(context: Context, private val response: Response<ResponseBody>) {
 
     private var error: (Throwable) -> Unit = {}
-    private var process: (downloadedSize: Long, length: Long, process: Float) -> Unit = { _, _, _ -> }
+    private var process: (downloadedSize: Long, length: Long, process: Float) -> Unit =
+        { _, _, _ -> }
     private var success: (downloadFile: File) -> Unit = {} //下载完成
 
     var setUri: () -> Uri? = { null } //设置下载的uri
@@ -118,7 +109,7 @@ class DownloadBuilder(context: Context, private val response: Response<ResponseB
         } catch (e: Exception) {
             emit(DownloadStatus.DownloadError(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 sealed class DownloadStatus {
