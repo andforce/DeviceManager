@@ -55,7 +55,7 @@ class DownloaderViewModel : ViewModel() {
                 error {
                     Log.e("NetworkViewModel", "download error: $it")
                 }
-            }.startDownload()
+            }
         }
     }
 }

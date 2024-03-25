@@ -14,38 +14,34 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 
-typealias DOWNLOAD_ERROR = (Throwable) -> Unit
-typealias DOWNLOAD_PROCESS = (downloadedSize: Long, length: Long, process: Float) -> Unit
-typealias DOWNLOAD_SUCCESS = (uri: File) -> Unit
-
 suspend fun download(
     context: Context,
     response: Response<ResponseBody>,
-    block: DownloadBuilder.() -> Unit
-): DownloadBuilder {
+    action: DownloadBuilder.() -> Unit
+) {
     val build = DownloadBuilder(context, response)
-    build.block()
-    return build
+    build.action()
+    build.startDownload()
 }
 
 class DownloadBuilder(context: Context, private val response: Response<ResponseBody>) {
 
-    private var error: DOWNLOAD_ERROR = {} //错误贺词
-    private var process: DOWNLOAD_PROCESS = { downloadedSize, filsLength, process -> } //进度
-    private var success: DOWNLOAD_SUCCESS = {} //下载完成
+    private var error: (Throwable) -> Unit = {}
+    private var process: (downloadedSize: Long, length: Long, process: Float) -> Unit = { _, _, _ -> }
+    private var success: (downloadFile: File) -> Unit = {} //下载完成
 
     var setUri: () -> Uri? = { null } //设置下载的uri
     var setFileName: () -> String? = { null } //设置文件名
 
-    fun process(process: DOWNLOAD_PROCESS) {
+    fun process(process: (downloadedSize: Long, length: Long, process: Float) -> Unit) {
         this.process = process
     }
 
-    fun error(error: DOWNLOAD_ERROR) {
+    fun error(error: (Throwable) -> Unit) {
         this.error = error
     }
 
-    fun success(success: DOWNLOAD_SUCCESS) {
+    fun success(success: (uri: File) -> Unit) {
         this.success = success
     }
 
@@ -126,7 +122,9 @@ class DownloadBuilder(context: Context, private val response: Response<ResponseB
 }
 
 sealed class DownloadStatus {
-    class DownloadProcess(val currentLength: Long, val length: Long, val process: Float) : DownloadStatus()
+    class DownloadProcess(val currentLength: Long, val length: Long, val process: Float) :
+        DownloadStatus()
+
     class DownloadError(val t: Throwable) : DownloadStatus()
     class DownloadSuccess(val uri: File) : DownloadStatus()
 }
