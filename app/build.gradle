@@ -81,7 +81,7 @@ dependencies {
     implementation project(path: ':commonUtils')
     implementation project(path: ':screenCast')
     implementation project(path: ':socket')
-    implementation project(path: ':network')
+    api project(path: ':network')
     implementation project(path: ':injectEvent')
     implementation project(path: ':packageManager')
     implementation project(path: ':accessibility')

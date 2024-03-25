@@ -11,13 +11,13 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andforce.device.ApiViewModel
+import com.andforce.device.apps.AppInfo
 import com.andforce.device.manager.databinding.ActivityMainBinding
 import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
-import com.andforce.network.api.bean.AppInfo
-import com.andforce.network.api.ApiViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService

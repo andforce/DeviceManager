@@ -1,6 +1,6 @@
-package com.andforce.network.api
+package com.andforce.device.apps
 
-import com.andforce.network.api.bean.AppInfo
+import com.andforce.network.api.JsonResponseResult
 import retrofit2.http.Body
 import retrofit2.http.POST
 

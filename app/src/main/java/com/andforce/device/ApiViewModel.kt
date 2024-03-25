@@ -1,10 +1,12 @@
-package com.andforce.network.api
+package com.andforce.device
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.andforce.device.apps.ApiService
+import com.andforce.device.apps.AppInfo
 import com.andforce.network.BuildConfig
-import com.andforce.network.api.bean.AppInfo
+import com.andforce.network.api.jsonApiCall
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
