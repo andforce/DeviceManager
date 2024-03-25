@@ -18,6 +18,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'HOST', '"http://10.66.50.84:3001"'
     }
 
     signingConfigs {
@@ -32,6 +34,7 @@ android {
     // viewBinding
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     buildTypes {

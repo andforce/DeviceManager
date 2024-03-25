@@ -4,19 +4,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.andforce.network.BuildConfig
-import com.andforce.socket.apkevent.ApkPushEvent
-import com.andforce.socket.mouseevent.MouseEvent
+import com.andforce.socket.BuildConfig
 import com.andforce.socket.SocketClient
+import com.andforce.socket.apkevent.ApkPushEvent
 import com.andforce.socket.apkevent.ApkUninstallEvent
+import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

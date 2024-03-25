@@ -12,8 +12,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-
-        buildConfigField 'String', 'HOST', '"http://10.66.50.84:3001"'
     }
 
     buildTypes {
@@ -28,10 +26,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-    }
-
-    buildFeatures {
-        buildConfig true
     }
 }
 
