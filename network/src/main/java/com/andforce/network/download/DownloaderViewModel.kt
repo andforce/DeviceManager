@@ -5,15 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andforce.network.api.bean.ErrorResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
-import retrofit2.Response
 import java.io.File
 
 
@@ -25,8 +22,8 @@ class DownloaderViewModel : ViewModel() {
     private val _downloadProcessFlow = MutableLiveData(0f)
     val downloadProcessFlow: LiveData<Float> = _downloadProcessFlow
 
-    private val _downloadError = MutableStateFlow<ErrorResponse?>(null)
-    val downloadErrorFlow: StateFlow<ErrorResponse?> = _downloadError
+    private val _downloadError = MutableStateFlow<DownloadError?>(null)
+    val downloadErrorFlow: StateFlow<DownloadError?> = _downloadError
 
     fun downloadApk(context: Context, url: String) {
         viewModelScope.launch {

@@ -6,7 +6,6 @@ import android.os.Environment
 import android.util.Log
 import android.webkit.MimeTypeMap
 import com.andforce.network.BuildConfig
-import com.andforce.network.api.bean.ErrorResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -39,7 +38,7 @@ private val downloadService = retrofit.create(DownloadApiService::class.java)
 
 class DownloadBuilder(context: Context, fileUrl: String) {
 
-    private var errorAction: (ErrorResponse) -> Unit = {}
+    private var errorAction: (DownloadError) -> Unit = {}
     private var processAction: (downloadedSize: Long, length: Long, process: Float) -> Unit =
         { _, _, _ -> }
     private var successAction: (downloadFile: File) -> Unit = {}
@@ -51,7 +50,7 @@ class DownloadBuilder(context: Context, fileUrl: String) {
         this.processAction = process
     }
 
-    fun onError(error: (ErrorResponse) -> Unit) {
+    fun onError(error: (DownloadError) -> Unit) {
         this.errorAction = error
     }
 
@@ -66,7 +65,7 @@ class DownloadBuilder(context: Context, fileUrl: String) {
             flow.flowOn(Dispatchers.IO)
                 .collect {
                     when (it) {
-                        is DownloadStatus.DownloadError -> errorAction(ErrorResponse(it.errorResponse.code(), it.errorResponse.message()))
+                        is DownloadStatus.DownloadError -> errorAction(DownloadError(it.errorResponse.code(), it.errorResponse.message()))
                         is DownloadStatus.DownloadProcess -> processAction(
                             it.currentLength,
                             it.length,

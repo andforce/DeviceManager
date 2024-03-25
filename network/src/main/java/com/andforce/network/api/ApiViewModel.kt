@@ -38,7 +38,7 @@ class ApiViewModel : ViewModel() {
 
     fun uploadAppInfoList(appInfo: List<AppInfo>) {
         viewModelScope.launch {
-            val responseResult = apiCall { apiService.postAppInfo(appInfo) }
+            val responseResult = jsonApiCall { apiService.postAppInfo(appInfo) }
             Log.d("NetworkViewModel", "postAppInfo response: $responseResult")
         }
     }

@@ -1,8 +1,8 @@
-package com.andforce.network.api.bean
+package com.andforce.network.api
 
 import com.google.gson.annotations.SerializedName
 
-data class ResponseResult<T>(
+data class JsonResponseResult<T>(
     @SerializedName("code") var code: Int = -1,
     @SerializedName("message") var message: String? = "",
     @SerializedName("data") var data: List<T>? = null
