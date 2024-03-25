@@ -121,10 +121,10 @@ class SocketClient(private val url: String) {
         })
 
         socket?.on("apk-upload", Emitter.Listener { args ->
-            Log.d("SocketClient", "apk-upload" + args[0].toString())
             val data = args[0] as JSONObject
             val down = ApkPushEvent(data.getString("name"), data.getString("path"))
             apkEventListener?.onApk(down)
+            Log.d("SocketClient", "apk-upload received: $down, apkEventListener is null? ${apkEventListener == null}")
         })
 
         socket?.on("uninstall-app", Emitter.Listener { args ->

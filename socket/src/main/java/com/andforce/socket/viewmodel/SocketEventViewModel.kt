@@ -12,7 +12,10 @@ import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.mouseevent.SocketStatusListener
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,8 +29,8 @@ class SocketEventViewModel : ViewModel() {
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
 
     // apk file push event
-    private val _apkFilePushEventFlow = MutableSharedFlow<ApkPushEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val apkFilePushEventFlow: SharedFlow<ApkPushEvent?> = _apkFilePushEventFlow
+    private val _apkFilePushEventFlow = MutableStateFlow<ApkPushEvent?>(null)
+    val apkFilePushEventFlow: StateFlow<ApkPushEvent?> = _apkFilePushEventFlow
 
     private val _apkUninstallEventFlow = MutableSharedFlow<ApkUninstallEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val apkUninstallEventFlow: SharedFlow<ApkUninstallEvent?> = _apkUninstallEventFlow
@@ -80,7 +83,7 @@ class SocketEventViewModel : ViewModel() {
     fun listenApkFilePushEvent() {
         viewModelScope.launch {
             socketClient?.let {
-                socketEventRepository.listenApkFilePushEvent(it).collectLatest { apkEvent->
+                socketEventRepository.listenApkFilePushEvent(it).collect { apkEvent->
                     _apkFilePushEventFlow.emit(apkEvent)
                 }
             }
