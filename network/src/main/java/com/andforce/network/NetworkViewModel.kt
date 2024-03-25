@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 class NetworkViewModel : ViewModel() {
@@ -19,6 +20,11 @@ class NetworkViewModel : ViewModel() {
             Log.d("NetworkViewModel", "response: $response")
             response
         }
+        .callTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
         .build()
 
     private val retrofit = Retrofit.Builder()
@@ -30,8 +36,8 @@ class NetworkViewModel : ViewModel() {
 
     fun uploadAppInfoList(appInfo: List<AppInfo>) {
         viewModelScope.launch {
-            val response = apiService.postAppInfo(appInfo)
-            Log.d("NetworkViewModel", "postAppInfo response: $response")
+            val responseResult = apiCall { apiService.postAppInfo(appInfo) }
+            Log.d("NetworkViewModel", "postAppInfo response: $responseResult")
         }
     }
 }
