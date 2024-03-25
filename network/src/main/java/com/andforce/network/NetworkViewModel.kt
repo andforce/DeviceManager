@@ -21,16 +21,16 @@ class NetworkViewModel : ViewModel() {
         }
         .build()
 
-    private val retrofit2 = Retrofit.Builder()
+    private val retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.HOST)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()
-    private val downloadService2 = retrofit2.create(ApiService::class.java)
+    private val apiService = retrofit.create(ApiService::class.java)
 
     fun uploadAppInfoList(appInfo: List<AppInfo>) {
         viewModelScope.launch {
-            val response = downloadService2.postAppInfo(appInfo)
+            val response = apiService.postAppInfo(appInfo)
             Log.d("NetworkViewModel", "postAppInfo response: $response")
         }
     }

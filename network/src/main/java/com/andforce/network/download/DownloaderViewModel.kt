@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.andforce.network.BuildConfig
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +18,7 @@ import java.io.File
 
 
 class DownloaderViewModel : ViewModel() {
-    private val client = OkHttpClient.Builder()
+    private val okHttpClient = OkHttpClient.Builder()
         // 添加拦截器，打印所有的请求和响应
         .addInterceptor {
             val request = it.request()
@@ -32,7 +31,7 @@ class DownloaderViewModel : ViewModel() {
     private val retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.HOST)
         // 使用OKHttp下载
-        .client(client)
+        .client(okHttpClient)
         .build()
 
     private val downloadService = retrofit.create(DownloadApiService::class.java)

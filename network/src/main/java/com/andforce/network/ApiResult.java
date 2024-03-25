@@ -1,8 +1,8 @@
 package com.andforce.network;
 
 public class ApiResult {
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     public ApiResult(int code, String message) {
         this.code = code;
