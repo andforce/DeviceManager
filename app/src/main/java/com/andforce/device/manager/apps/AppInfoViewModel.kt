@@ -1,22 +1,20 @@
-package com.andforce.device
+package com.andforce.device.manager.apps
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andforce.device.apps.ApiService
-import com.andforce.device.apps.AppInfo
 import com.andforce.network.ServiceFactory
 import com.andforce.network.api.jsonApiCall
 import kotlinx.coroutines.launch
 
 
-class ApiViewModel : ViewModel() {
+class AppInfoViewModel : ViewModel() {
 
-    private val apiService = ServiceFactory.createService(ApiService::class.java)
+    private val mAppInfoService = ServiceFactory.createService(AppInfoService::class.java)
 
     fun uploadAppInfoList(appInfo: List<AppInfo>) {
         viewModelScope.launch {
-            val responseResult = jsonApiCall { apiService.postAppInfo(appInfo) }
+            val responseResult = jsonApiCall { mAppInfoService.postAppInfo(appInfo) }
             Log.d("NetworkViewModel", "postAppInfo response: $responseResult")
         }
     }

@@ -11,8 +11,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.andforce.device.ApiViewModel
-import com.andforce.device.apps.AppInfo
+import com.andforce.device.manager.apps.AppInfoViewModel
+import com.andforce.device.manager.apps.AppInfo
 import com.andforce.device.manager.databinding.ActivityMainBinding
 import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val screenCastViewModel: ScreenCastViewModel by inject()
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
-    private val mApiViewModel: ApiViewModel by inject()
+    private val mAppInfoViewModel: AppInfoViewModel by inject()
     private val downloaderViewModel: DownloaderViewModel by inject()
 
     @SuppressLint("SetTextI18n")
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                     appBean.packageName
                 )
             }
-            mApiViewModel.uploadAppInfoList(appInfo)
+            mAppInfoViewModel.uploadAppInfoList(appInfo)
         }
         packageManagerViewModel.loadInstalledApps(this.applicationContext)
 

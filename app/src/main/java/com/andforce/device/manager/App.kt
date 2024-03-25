@@ -1,7 +1,7 @@
 package com.andforce.device.manager
 
 import android.app.Application
-import com.andforce.device.ApiViewModel
+import com.andforce.device.manager.apps.AppInfoViewModel
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
@@ -21,7 +21,7 @@ class App : Application() {
             single { ScreenCastViewModel() }
             single { SocketEventViewModel() }
             single { PackageManagerViewModel() }
-            single { ApiViewModel() }
+            single { AppInfoViewModel() }
             single { DownloaderViewModel() }
         }
 
