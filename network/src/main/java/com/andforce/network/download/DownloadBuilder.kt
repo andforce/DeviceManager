@@ -6,11 +6,14 @@ import android.os.Environment
 import android.util.Log
 import android.webkit.MimeTypeMap
 import com.andforce.network.BuildConfig
+import com.andforce.network.api.bean.ErrorResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.BufferedInputStream
 import java.io.File
@@ -36,24 +39,24 @@ private val downloadService = retrofit.create(DownloadApiService::class.java)
 
 class DownloadBuilder(context: Context, fileUrl: String) {
 
-    private var error: (Throwable) -> Unit = {}
-    private var process: (downloadedSize: Long, length: Long, process: Float) -> Unit =
+    private var errorAction: (ErrorResponse) -> Unit = {}
+    private var processAction: (downloadedSize: Long, length: Long, process: Float) -> Unit =
         { _, _, _ -> }
-    private var success: (downloadFile: File) -> Unit = {}
+    private var successAction: (downloadFile: File) -> Unit = {}
 
     var setUri: () -> Uri? = { null }
     var setFileName: () -> String? = { null }
 
     fun onProcess(process: (downloadedSize: Long, length: Long, process: Float) -> Unit) {
-        this.process = process
+        this.processAction = process
     }
 
-    fun onError(error: (Throwable) -> Unit) {
-        this.error = error
+    fun onError(error: (ErrorResponse) -> Unit) {
+        this.errorAction = error
     }
 
     fun onSuccess(success: (uri: File) -> Unit) {
-        this.success = success
+        this.successAction = success
     }
 
     suspend fun startDownload() {
@@ -63,14 +66,14 @@ class DownloadBuilder(context: Context, fileUrl: String) {
             flow.flowOn(Dispatchers.IO)
                 .collect {
                     when (it) {
-                        is DownloadStatus.DownloadError -> error(it.t)
-                        is DownloadStatus.DownloadProcess -> process(
+                        is DownloadStatus.DownloadError -> errorAction(ErrorResponse(it.errorResponse.code(), it.errorResponse.message()))
+                        is DownloadStatus.DownloadProcess -> processAction(
                             it.currentLength,
                             it.length,
                             it.process
                         )
 
-                        is DownloadStatus.DownloadSuccess -> success(it.uri)
+                        is DownloadStatus.DownloadSuccess -> successAction(it.uri)
                     }
                 }
         }
@@ -79,9 +82,7 @@ class DownloadBuilder(context: Context, fileUrl: String) {
     private val flow = flow {
         val response = downloadApiCall { downloadService.downloadFile(fileUrl) }
         if (response.isSuccessful.not()) {
-            val errorMessage = "${response.code()} ${response.errorBody()?.string()}"
-            val error = RuntimeException(errorMessage)
-            emit(DownloadStatus.DownloadError(error))
+            emit(DownloadStatus.DownloadError(response))
         } else {
             try {
                 val body = response.body() ?: throw RuntimeException("下载出错")
@@ -133,7 +134,7 @@ class DownloadBuilder(context: Context, fileUrl: String) {
                 emit(DownloadStatus.DownloadSuccess(file!!))
 
             } catch (e: Exception) {
-                emit(DownloadStatus.DownloadError(e))
+                emit(DownloadStatus.DownloadError(e.toResponse()))
             }
         }
     }.flowOn(Dispatchers.IO)
@@ -143,6 +144,6 @@ sealed class DownloadStatus {
     class DownloadProcess(val currentLength: Long, val length: Long, val process: Float) :
         DownloadStatus()
 
-    class DownloadError(val t: Throwable) : DownloadStatus()
+    class DownloadError(val errorResponse: Response<ResponseBody>) : DownloadStatus()
     class DownloadSuccess(val uri: File) : DownloadStatus()
 }

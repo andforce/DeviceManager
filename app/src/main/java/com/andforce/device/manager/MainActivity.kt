@@ -57,13 +57,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
 
-        downloaderViewModel.downloadProcessFlow.observe(this) {
-            viewBinding.apkInfoDownloadProgress.text = "APK下载进度: ${it * 100}%"
-        }
-
-        downloaderViewModel.downloadErrorFlow.asLiveData().observe(this) {
-            it?.let {
-                viewBinding.apkInfo.text = "APK下载失败: ${it.message}"
+        downloaderViewModel.apply {
+            downloadProcessFlow.observe(this@MainActivity) {
+                viewBinding.apkInfoDownloadProgress.text = "APK下载进度: ${it * 100}%"
+            }
+            downloadErrorFlow.asLiveData().observe(this@MainActivity) {
+                it?.let {
+                    viewBinding.apkInfo.text = "APK下载失败: ${it.code} ,${it.message}"
+                }
             }
         }
 

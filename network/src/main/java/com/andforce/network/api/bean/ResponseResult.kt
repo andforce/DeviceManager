@@ -8,10 +8,6 @@ data class ResponseResult<T>(
     @SerializedName("data") var data: List<T>? = null
 ) {
 
-    fun isSuccess(): Boolean {
-        return code == 0
-    }
-
     override fun toString(): String {
         return "ResponseResult(code=$code, message=$message, data=$data)"
     }
