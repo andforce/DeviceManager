@@ -19,6 +19,7 @@ import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.api.bean.AppInfo
 import com.andforce.network.api.ApiViewModel
 import com.andforce.network.download.DownloaderViewModel
+import com.andforce.network.download.FileDownloader
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
@@ -59,6 +60,27 @@ class MainActivity : AppCompatActivity() {
 
         downloaderViewModel.downloadProcessFlow.observe(this) {
             viewBinding.apkInfoDownloadProgress.text = "APK下载进度: ${it * 100}%"
+        }
+
+        downloaderViewModel.downloadErrorFlow.asLiveData().observe(this) {
+            it?.let {
+                viewBinding.apkInfo.text = "APK下载失败: ${it.message}"
+            }
+        }
+
+        lifecycleScope.launch {
+
+            FileDownloader.download(this@MainActivity, "http://10.66.50.84:3001/uploads/apk-1711347253051.apk") {
+                onSuccess {
+                    viewBinding.apkInfo.text = "APK下载成功: ${it.absolutePath}"
+                }
+                onProcess { _, _, process ->
+                    viewBinding.apkInfoDownloadProgress.text = "APK下载进度: ${process * 100}%"
+                }
+                onError {
+                    viewBinding.apkInfo.text = "APK下载失败: ${it.message}"
+                }
+            }
         }
 
         // 启动Socket

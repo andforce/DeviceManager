@@ -19,20 +19,20 @@ class DownloadBuilder(context: Context, private val response: Response<ResponseB
     private var error: (Throwable) -> Unit = {}
     private var process: (downloadedSize: Long, length: Long, process: Float) -> Unit =
         { _, _, _ -> }
-    private var success: (downloadFile: File) -> Unit = {} //下载完成
+    private var success: (downloadFile: File) -> Unit = {}
 
-    var setUri: () -> Uri? = { null } //设置下载的uri
-    var setFileName: () -> String? = { null } //设置文件名
+    var setUri: () -> Uri? = { null }
+    var setFileName: () -> String? = { null }
 
-    fun process(process: (downloadedSize: Long, length: Long, process: Float) -> Unit) {
+    fun onProcess(process: (downloadedSize: Long, length: Long, process: Float) -> Unit) {
         this.process = process
     }
 
-    fun error(error: (Throwable) -> Unit) {
+    fun onError(error: (Throwable) -> Unit) {
         this.error = error
     }
 
-    fun success(success: (uri: File) -> Unit) {
+    fun onSuccess(success: (uri: File) -> Unit) {
         this.success = success
     }
 

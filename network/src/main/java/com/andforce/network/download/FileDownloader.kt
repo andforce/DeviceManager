@@ -29,7 +29,7 @@ object FileDownloader {
         url: String,
         action: DownloadBuilder.() -> Unit
     ) {
-        val response = downloadService.downloadFile(url)
+        val response = apiCall { downloadService.downloadFile(url) }
         val build = DownloadBuilder(context, response)
         build.action()
         build.startDownload()

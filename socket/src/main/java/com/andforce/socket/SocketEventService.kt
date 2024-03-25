@@ -124,7 +124,7 @@ class SocketEventService: Service() {
         }
         apkDownloadJob = GlobalScope.launch(Dispatchers.IO) {
             Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
-            downloaderViewModel.fileDownloadStateFlow.collect {
+            downloaderViewModel.downloadStateFlow.collect {
                 packageManagerViewModel.installApp(applicationContext, it)
             }
         }
