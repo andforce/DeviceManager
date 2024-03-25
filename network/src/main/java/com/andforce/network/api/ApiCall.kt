@@ -1,8 +1,8 @@
-package com.andforce.network
+package com.andforce.network.api
 
 import android.util.Log
+import com.andforce.network.api.bean.ResponseResult
 import com.google.gson.JsonParseException
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,16 +11,6 @@ import org.json.JSONException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-
-open class ResponseResult<T>(
-    @SerializedName("code") var code: Int = -1,
-    @SerializedName("message") var message: String? = "",
-    @SerializedName("data") var data: List<T>? = null
-) {
-    override fun toString(): String {
-        return "ResponseResult(code=$code, message=$message, data=$data)"
-    }
-}
 
 suspend inline fun <T> apiCall(crossinline call: suspend CoroutineScope.() -> ResponseResult<T>): ResponseResult<T> {
     return withContext(Dispatchers.IO) {

@@ -16,8 +16,8 @@ import com.andforce.device.packagemanager.apps.AppBean
 import com.andforce.device.packagemanager.apps.InstalledAppAdapter
 import com.andforce.device.packagemanager.apps.OnUninstallClickListener
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
-import com.andforce.network.AppInfo
-import com.andforce.network.NetworkViewModel
+import com.andforce.network.api.bean.AppInfo
+import com.andforce.network.api.ApiViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val screenCastViewModel: ScreenCastViewModel by inject()
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
-    private val networkViewModel: NetworkViewModel by inject()
+    private val mApiViewModel: ApiViewModel by inject()
     private val downloaderViewModel: DownloaderViewModel by inject()
 
     @SuppressLint("SetTextI18n")
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                     appBean.packageName
                 )
             }
-            networkViewModel.uploadAppInfoList(appInfo)
+            mApiViewModel.uploadAppInfoList(appInfo)
         }
         packageManagerViewModel.loadInstalledApps(this.applicationContext)
 

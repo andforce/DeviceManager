@@ -1,8 +1,10 @@
-package com.andforce.network
+package com.andforce.network.api
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.andforce.network.BuildConfig
+import com.andforce.network.api.bean.AppInfo
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -10,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 
-class NetworkViewModel : ViewModel() {
+class ApiViewModel : ViewModel() {
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor {
