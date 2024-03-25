@@ -20,62 +20,70 @@ suspend inline fun downloadApiCall(crossinline call: suspend CoroutineScope.() -
             return@withContext call()
         } catch (e: Throwable) {
             Log.e("ApiCaller", "apiCall() error: ", e)
-            return@withContext ApiException.build(e).toResponse()
+            return@withContext e.toResponse()
         }
     }
 }
 
-// 网络、数据解析错误处理
-class ApiException(
-    private val code: Int,
-    override val message: String?,
-    override val cause: Throwable? = null
-) : RuntimeException(message, cause) {
-    companion object {
-        // 网络状态码
-        private const val CODE_NET_ERROR = 4000
-        private const val CODE_TIMEOUT = 4080
-        private const val CODE_JSON_PARSE_ERROR = 4010
-        private const val CODE_SERVER_ERROR = 5000
+const val CODE_CONNECT_ERROR = -4001
+const val CODE_CONNECT_TIMEOUT_ERROR = -4000
+const val CODE_MAYBE_SERVER_ERROR = -5000
 
-        fun build(e: Throwable): ApiException {
-            return when (e) {
-                is android.system.ErrnoException -> {
-                    ApiException(CODE_NET_ERROR, "ErrnoException, 网络连接失败，请检查后再试")
-                }
+const val CODE_JSON_PARSE_ERROR = -1000
 
-                is java.net.ConnectException -> {
-                    ApiException(CODE_NET_ERROR, "ConnectException,网络连接失败，请检查后再试")
-                }
-
-                is HttpException -> {
-                    ApiException(CODE_NET_ERROR, "HttpException, 网络异常(${e.code()},${e.message()})")
-                }
-
-                is UnknownHostException -> {
-                    ApiException(CODE_NET_ERROR, "UnknownHostException, 网络连接失败，请检查后再试")
-                }
-
-                is SocketTimeoutException -> {
-                    ApiException(CODE_TIMEOUT, "SocketTimeoutException, 请求超时，请稍后再试")
-                }
-
-                is IOException -> {
-                    ApiException(CODE_NET_ERROR, "IOException, 网络异常(${e.message})")
-                }
-
-                is JsonParseException, is JSONException -> {
-                    ApiException(CODE_JSON_PARSE_ERROR, "JsonParseException, 数据解析错误，请稍后再试")
-                }
-
-                else -> {
-                    ApiException(CODE_SERVER_ERROR, "系统错误(${e.message})")
-                }
-            }
+fun Throwable.toResponse(): Response<ResponseBody> {
+    return when (this) {
+        is android.system.ErrnoException -> {
+            Response.error(
+                CODE_CONNECT_ERROR,
+                "ErrnoException, 网络连接失败，请检查后再试".toResponseBody()
+            )
         }
-    }
 
-    fun toResponse(): Response<ResponseBody> {
-        return Response.error(code, (message ?: "").toResponseBody())
+        is java.net.ConnectException -> {
+            Response.error(
+                CODE_CONNECT_ERROR,
+                "ConnectException, 网络连接失败，请检查后再试".toResponseBody()
+            )
+        }
+
+        is HttpException -> {
+            Response.error(
+                CODE_CONNECT_ERROR,
+                "HttpException, 网络异常(${this.code()},${this.message()})".toResponseBody()
+            )
+        }
+
+        is UnknownHostException -> {
+            Response.error(
+                CODE_CONNECT_ERROR,
+                "UnknownHostException, 网络连接失败，请检查后再试".toResponseBody()
+            )
+        }
+
+        is SocketTimeoutException -> {
+            Response.error(
+                CODE_CONNECT_TIMEOUT_ERROR,
+                "SocketTimeoutException, 请求超时，请稍后再试".toResponseBody()
+            )
+        }
+
+        is IOException -> {
+            Response.error(
+                CODE_CONNECT_ERROR,
+                "IOException, 网络异常(${this.message})".toResponseBody()
+            )
+        }
+
+        is JsonParseException, is JSONException -> {
+            Response.error(
+                CODE_JSON_PARSE_ERROR,
+                "JsonParseException, 数据解析错误，请稍后再试".toResponseBody()
+            )
+        }
+
+        else -> {
+            Response.error(CODE_MAYBE_SERVER_ERROR, "系统错误(${this.message})".toResponseBody())
+        }
     }
 }
