@@ -8,7 +8,6 @@ import retrofit2.Retrofit
 
 object FileDownloader {
     private val okHttpClient = OkHttpClient.Builder()
-        // 添加拦截器，打印所有的请求和响应
         .addInterceptor {
             val request = it.request()
             val response = it.proceed(request)
