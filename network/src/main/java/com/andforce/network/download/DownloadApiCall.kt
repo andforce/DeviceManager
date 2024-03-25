@@ -14,9 +14,8 @@ import retrofit2.Response
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-suspend inline fun apiCall(crossinline call: suspend CoroutineScope.() -> Response<ResponseBody>): Response<ResponseBody> {
+suspend inline fun downloadApiCall(crossinline call: suspend CoroutineScope.() -> Response<ResponseBody>): Response<ResponseBody> {
     return withContext(Dispatchers.IO) {
-
         try {
             return@withContext call()
         } catch (e: Throwable) {

@@ -19,7 +19,6 @@ import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.api.bean.AppInfo
 import com.andforce.network.api.ApiViewModel
 import com.andforce.network.download.DownloaderViewModel
-import com.andforce.network.download.FileDownloader
 import com.andforce.screen.cast.MediaProjectionRequestViewModel
 import com.andforce.screen.cast.ScreenCastService
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
@@ -68,21 +67,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch {
-
-            FileDownloader.download(this@MainActivity, "http://10.66.50.84:3001/uploads/apk-1711347253051.apk") {
-                onSuccess {
-                    viewBinding.apkInfo.text = "APK下载成功: ${it.absolutePath}"
-                }
-                onProcess { _, _, process ->
-                    viewBinding.apkInfoDownloadProgress.text = "APK下载进度: ${process * 100}%"
-                }
-                onError {
-                    viewBinding.apkInfo.text = "APK下载失败: ${it.message}"
-                }
-            }
-        }
-
         // 启动Socket
         val intent = Intent("ACTION_SOCKET_EVENT_SERVICE").apply {
             setPackage(packageName)
@@ -93,7 +77,12 @@ class MainActivity : AppCompatActivity() {
         viewBinding.rvList.layoutManager = LinearLayoutManager(this)
         // 设置上下间隔
         viewBinding.rvList.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: android.graphics.Rect, view: android.view.View, parent: RecyclerView, state: RecyclerView.State) {
+            override fun getItemOffsets(
+                outRect: android.graphics.Rect,
+                view: android.view.View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
                 outRect.top = 10
                 outRect.bottom = 10
             }
@@ -130,6 +119,7 @@ class MainActivity : AppCompatActivity() {
                 is MediaProjectionRequestViewModel.Result.Success -> {
                     ScreenCastService.startService(this, false, it.data, it.resultCode)
                 }
+
                 MediaProjectionRequestViewModel.Result.PermissionDenied -> {
                     Toast.makeText(this, "User did not grant permission", Toast.LENGTH_SHORT).show()
                 }
@@ -150,6 +140,7 @@ class MainActivity : AppCompatActivity() {
                     viewBinding.btnStart.text = "结束投屏"
                     viewBinding.castInfo.text = "投屏正在进行"
                 }
+
                 is RecordState.Stopped -> {
                     viewBinding.btnStart.text = "投屏开始"
                     viewBinding.castInfo.text = "投屏结束"
@@ -168,7 +159,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         socketEventViewModel.socketStatusLiveData.observe(this@MainActivity) {
-            when(it) {
+            when (it) {
                 SocketStatusListener.SocketStatus.CONNECTING -> {
                     viewBinding.socketStatus.text = "Socket:CONNECTING"
                     viewBinding.btnSocket.apply {
@@ -176,6 +167,7 @@ class MainActivity : AppCompatActivity() {
                         text = "连接中..."
                     }
                 }
+
                 SocketStatusListener.SocketStatus.CONNECTED -> {
                     viewBinding.socketStatus.text = "Socket:CONNECTED"
                     viewBinding.btnSocket.apply {
@@ -184,14 +176,15 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                SocketStatusListener.SocketStatus.DISCONNECTED-> {
+                SocketStatusListener.SocketStatus.DISCONNECTED -> {
                     viewBinding.socketStatus.text = "Socket:DISCONNECTED"
                     viewBinding.btnSocket.apply {
                         isEnabled = true
                         text = "连接Socket"
                     }
                 }
-                SocketStatusListener.SocketStatus.CONNECT_ERROR-> {
+
+                SocketStatusListener.SocketStatus.CONNECT_ERROR -> {
                     viewBinding.socketStatus.text = "Socket:CONNECT_ERROR"
                     viewBinding.btnSocket.apply {
                         isEnabled = true
