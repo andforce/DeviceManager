@@ -2,6 +2,7 @@ package com.andforce.network.api
 
 import android.system.ErrnoException
 import android.util.Log
+import com.andforce.network.StatusCode
 import com.google.gson.JsonParseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,47 +26,41 @@ suspend inline fun <T> jsonApiCall(crossinline call: suspend CoroutineScope.() -
     }
 }
 
-const val CODE_CONNECT_ERROR = -4001
-const val CODE_CONNECT_TIMEOUT_ERROR = -4000
-const val CODE_MAYBE_SERVER_ERROR = -5000
-
-const val CODE_JSON_PARSE_ERROR = -1000
-
 fun <T> Throwable.toResponseResult(): JsonResponseResult<T> {
     return when (this) {
         is ErrnoException -> {
-            JsonResponseResult(CODE_CONNECT_ERROR, "ErrnoException, 网络连接失败，请检查后再试")
+            JsonResponseResult(StatusCode.CODE_CONNECT_ERROR, "ErrnoException, 网络连接失败，请检查后再试")
         }
 
         is ConnectException -> {
-            JsonResponseResult(CODE_CONNECT_ERROR, "ConnectException, 网络连接失败，请检查后再试")
+            JsonResponseResult(StatusCode.CODE_CONNECT_ERROR, "ConnectException, 网络连接失败，请检查后再试")
         }
 
         is HttpException -> {
             JsonResponseResult(
-                CODE_CONNECT_ERROR,
+                StatusCode.CODE_CONNECT_ERROR,
                 "HttpException, 网络异常(${this.code()},${this.message()})"
             )
         }
 
         is UnknownHostException -> {
-            JsonResponseResult(CODE_CONNECT_ERROR, "UnknownHostException, 网络连接失败，请检查后再试")
+            JsonResponseResult(StatusCode.CODE_CONNECT_ERROR, "UnknownHostException, 网络连接失败，请检查后再试")
         }
 
         is SocketTimeoutException -> {
-            JsonResponseResult(CODE_CONNECT_TIMEOUT_ERROR, "SocketTimeoutException, 请求超时，请稍后再试")
+            JsonResponseResult(StatusCode.CODE_CONNECT_TIMEOUT_ERROR, "SocketTimeoutException, 请求超时，请稍后再试")
         }
 
         is IOException -> {
-            JsonResponseResult(CODE_CONNECT_ERROR, "IOException, 网络异常(${this.localizedMessage})")
+            JsonResponseResult(StatusCode.CODE_CONNECT_ERROR, "IOException, 网络异常(${this.localizedMessage})")
         }
 
         is JsonParseException, is JSONException -> {
-            JsonResponseResult(CODE_JSON_PARSE_ERROR, "JsonParseException, 数据解析错误，请稍后再试")
+            JsonResponseResult(StatusCode.CODE_JSON_PARSE_ERROR, "JsonParseException, 数据解析错误，请稍后再试")
         }
 
         else -> {
-            JsonResponseResult(CODE_MAYBE_SERVER_ERROR, "系统错误(${this.localizedMessage})")
+            JsonResponseResult(StatusCode.CODE_MAYBE_SERVER_ERROR, "系统错误(${this.localizedMessage})")
         }
     }
 }
