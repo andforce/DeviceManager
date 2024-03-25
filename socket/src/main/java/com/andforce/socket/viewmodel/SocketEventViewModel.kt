@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.andforce.network.BuildConfig
 import com.andforce.socket.apkevent.ApkPushEvent
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.SocketClient
@@ -23,10 +24,7 @@ class SocketEventViewModel : ViewModel() {
     private val socketEventRepository = SocketEventRepository()
 
     private var socketClient: SocketClient? = null
-//    private var socketUrl: String = "http://192.168.2.183:3001"
-//    private var socketUrl: String = "http://10.66.32.51:3001"
-    private var socketUrl: String = "http://10.66.50.84:3001"
-//    private var socketUrl: String = "http://192.168.8.90:3001"
+    private var socketUrl: String = BuildConfig.HOST
 
     private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()

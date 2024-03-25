@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.andforce.network.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
@@ -29,10 +30,7 @@ class DownloaderViewModel : ViewModel() {
         }
         .build()
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://10.66.50.84:3001")
-//        .baseUrl("http://10.66.32.51:3001")
-//        .baseUrl("http://192.168.8.90:3001")
-//        .baseUrl("http://192.168.2.183:3001")
+        .baseUrl(BuildConfig.HOST)
         // 使用OKHttp下载
         .client(client)
         .build()
