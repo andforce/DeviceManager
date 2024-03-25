@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 
 class DownloaderViewModel : ViewModel() {
@@ -28,10 +27,6 @@ class DownloaderViewModel : ViewModel() {
             Log.d("DownloaderViewModel", "response: $response")
             response
         }
-        .callTimeout(10, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
         .build()
     private val retrofit = Retrofit.Builder()
