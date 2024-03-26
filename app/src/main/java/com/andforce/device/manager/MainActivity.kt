@@ -68,6 +68,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        viewBinding.btnLoadApps.setOnClickListener {
+            lifecycleScope.launch {
+                packageManagerViewModel.loadInstalledApps(applicationContext)
+            }
+        }
+
         // 启动Socket
         val intent = Intent("ACTION_SOCKET_EVENT_SERVICE").apply {
             setPackage(packageName)

@@ -33,3 +33,4 @@ google-services.json
 *.hprof
 
 WebServer/www/screen.jpeg
+WebServer/www/apps.json

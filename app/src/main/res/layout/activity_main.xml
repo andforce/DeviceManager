@@ -68,6 +68,12 @@
             tools:ignore="HardcodedText,RtlHardcoded" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <Button
+        android:id="@+id/btn_load_apps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="加载应用列表" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"

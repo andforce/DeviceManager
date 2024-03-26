@@ -1,17 +1,13 @@
 var bodyParser = require('body-parser');
 
-var express = require('express'),
-    app = express(),
-    server = require('http').createServer(app),
-    users = [];
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
 
 app.use(bodyParser());
 
 const fs = require('fs');
 const path = require("path");
-
-const io = require('socket.io')(server)
-let globalSocket;
 
 const multer = require('multer');
 
@@ -28,6 +24,9 @@ const upload = multer({
     storage: storage
 }).single('apk');
 
+const io = require('socket.io')(server)
+const sockets = {};
+
 // Upload image
 app.post('/upload', (req, res) => {
     upload(req, res, (err) => {
@@ -38,16 +37,16 @@ app.post('/upload', (req, res) => {
             console.log("upload success");
             console.log(req.file);
             res.send('success');
-            // 通过socket.io发送消息
-            if (globalSocket) {
+
+            // sockets 是一个对象，保存了所有的socket连接
+            // 遍历sockets，发送appinfo事件
+            for (var key in sockets) {
                 console.log('emit apk-upload event');
                 const apkInfo = new Object({
                     name: req.file.filename,
                     path: '/uploads/' + req.file.filename
                 });
-                globalSocket.broadcast.emit('apk-upload', apkInfo);
-            } else {
-                console.log('emit apk-upload event, error: no socket');
+                sockets[key].broadcast.emit('apk-upload', apkInfo);
             }
         }
     });
@@ -63,15 +62,21 @@ app.post('/post_appinfo', (req, res) => {
         console.log('name: ' + item.name + ', packageName: ' + item.packageName);
     });
 
-    // Emit the data using socket.io
-    if (globalSocket) {
-        console.log('emit ACTION_APPINFO data: ' + data);
-        globalSocket.broadcast.emit('ACTION_APPINFO', data);
-    } else {
-        console.log('emit appinfo event, error: no socket');
-    }
-
-    // Send a response back to the client
+    // 把data 保存到apps.json文件
+    const savePath = path.join(__dirname, "www", 'apps.json');
+    fs.writeFile(savePath, JSON.stringify(data), function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('write apps.json success');
+            // sockets 是一个对象，保存了所有的socket连接
+            // 遍历sockets，发送appinfo事件
+            for (var key in sockets) {
+                sockets[key].emit('ACTION_APPINFO', data);
+                console.log('emit appinfo event, error: no socket');
+            }
+        }
+    });
     res.send({ code: 100, message: 'success' });
 });
 
@@ -83,17 +88,14 @@ app.use('/', express.static(__dirname + '/www'));
 //server.listen(3000);//for local test
 server.listen(process.env.PORT || 3001);//publish to heroku
 
+
 io.sockets.on('connection', function(socket) {
     console.log('a user connected');
-    globalSocket = socket;
+    sockets[socket.id] = socket;
     //user leaves
     socket.on('disconnect', function() {
         console.log('a user disconnected');
-        if (socket.nickname != null) {
-            //users.splice(socket.userIndex, 1);
-            users.splice(users.indexOf(socket.nickname), 1);
-            socket.broadcast.emit('system', socket.nickname, users.length, 'logout');
-        }
+        delete sockets[socket.id];
     });
 
     // on mousedown
