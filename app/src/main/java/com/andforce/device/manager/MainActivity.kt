@@ -105,13 +105,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         packageManagerViewModel.appUninstallResult.observe(this) {
-            lifecycleScope.launch {
-                packageManagerViewModel.loadInstalledApps(applicationContext)
+            if (it) {
+                lifecycleScope.launch {
+                    packageManagerViewModel.loadInstalledApps(applicationContext)
+                }
             }
         }
         packageManagerViewModel.appInstallResult.observe(this) {
-            lifecycleScope.launch {
-                packageManagerViewModel.loadInstalledApps(applicationContext)
+            if (it) {
+                lifecycleScope.launch {
+                    packageManagerViewModel.loadInstalledApps(applicationContext)
+                }
             }
         }
         // Load本机应用

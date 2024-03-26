@@ -90,7 +90,7 @@ server.listen(process.env.PORT || 3001);//publish to heroku
 
 
 io.sockets.on('connection', function(socket) {
-    console.log('a user connected');
+    console.log('a user connected, id: ' + socket.id);
     sockets[socket.id] = socket;
     //user leaves
     socket.on('disconnect', function() {
