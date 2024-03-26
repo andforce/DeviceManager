@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val screenCastViewModel: ScreenCastViewModel by inject()
     private val socketEventViewModel: SocketEventViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
-    private val mAppInfoViewModel: AppInfoViewModel by inject()
+    private val appInfoViewModel: AppInfoViewModel by inject()
     private val downloaderViewModel: DownloaderViewModel by inject()
 
     @SuppressLint("SetTextI18n")
@@ -111,7 +111,9 @@ class MainActivity : AppCompatActivity() {
                     appBean.packageName
                 )
             }
-            mAppInfoViewModel.uploadAppInfoList(appInfo)
+            lifecycleScope.launch {
+                appInfoViewModel.uploadAppInfoList(appInfo)
+            }
         }
         packageManagerViewModel.loadInstalledApps(this.applicationContext)
 
