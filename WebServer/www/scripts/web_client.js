@@ -26,31 +26,31 @@ Web_client.prototype = {
         });
 
         // appinfo
-        this.socket.on('appinfo', function(data) {
-            var list = document.getElementById('myList');
+        that.socket.on('ACTION_APPINFO', function(data) {
+            //var list = document.getElementById('myList');
 
             console.log('Received appinfo event', data);
             // 清除掉列表中的所有元素
-            while (list.firstChild) {
-                list.removeChild(list.firstChild);
-            }
-
-            data.forEach(function(item) {
-                var listItem = document.createElement('div');
-                listItem.textContent = item.name + ' (' + item.packageName + ')';
-
-                var uninstallButton = document.createElement('button');
-                uninstallButton.textContent = 'Uninstall';
-                uninstallButton.onclick = function() {
-                    // Send uninstall event here
-                    console.log('Uninstalling ' + item.packageName);
-
-                    that.socket.emit('uninstall-app', item);
-                };
-
-                listItem.appendChild(uninstallButton);
-                list.appendChild(listItem);
-            });
+            // while (list.firstChild) {
+            //     list.removeChild(list.firstChild);
+            // }
+            //
+            // data.forEach(function(item) {
+            //     var listItem = document.createElement('div');
+            //     listItem.textContent = item.name + ' (' + item.packageName + ')';
+            //
+            //     var uninstallButton = document.createElement('button');
+            //     uninstallButton.textContent = 'Uninstall';
+            //     uninstallButton.onclick = function() {
+            //         // Send uninstall event here
+            //         console.log('Uninstalling ' + item.packageName);
+            //
+            //         that.socket.emit('uninstall-app', item);
+            //     };
+            //
+            //     listItem.appendChild(uninstallButton);
+            //     list.appendChild(listItem);
+            // });
         });
 
         var dropzone = document.getElementById('dropzone');

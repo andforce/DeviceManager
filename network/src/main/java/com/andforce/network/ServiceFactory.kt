@@ -9,10 +9,28 @@ import java.util.concurrent.TimeUnit
 object ServiceFactory {
 
     private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor {
-            val request = it.request()
-            val response = it.proceed(request)
+        .addInterceptor { chain ->
+            val request = chain.request()
             Log.d("NetworkViewModel", "request: ${request.url}")
+
+            // 如果是POST请求，打印请求体
+            if (request.method == "POST") {
+                val json = try {
+                    request.body?.let {
+                        val buffer = okio.Buffer()
+                        it.writeTo(buffer)
+                        buffer.readUtf8().also {
+                            buffer.close()
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+                Log.d("NetworkViewModel", "request body: $json")
+            }
+
+            val response = chain.proceed(request)
             Log.d("NetworkViewModel", "response: $response")
             response
         }

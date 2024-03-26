@@ -65,8 +65,8 @@ app.post('/post_appinfo', (req, res) => {
 
     // Emit the data using socket.io
     if (globalSocket) {
-        console.log('emit appinfo event');
-        globalSocket.broadcast.emit('appinfo', data);
+        console.log('emit ACTION_APPINFO data: ' + data);
+        globalSocket.broadcast.emit('ACTION_APPINFO', data);
     } else {
         console.log('emit appinfo event, error: no socket');
     }
