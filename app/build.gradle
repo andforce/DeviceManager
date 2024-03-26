@@ -19,7 +19,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'HOST', '"http://10.66.50.84:3001"'
+        buildConfigField 'String', 'HOST', '"http://10.66.32.51:3001"'
     }
 
     signingConfigs {

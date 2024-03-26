@@ -124,16 +124,14 @@ io.sockets.on('connection', function(socket) {
 
     //new image get
     socket.on('image', function(imgData, color) {
-        console.log('image received');
-        //socket.broadcast.emit('newImg', socket.nickname, imgData, color);
-        var savePath = path.join(__dirname, "www",'screen.jpeg');
+        const savePath = path.join(__dirname, "www", 'screen.jpeg');
         fs.writeFile(savePath, imgData, function (err) {
             if (err) {
                 console.log(err);
             } else {
-                var pathWithTime = "screen.jpeg?t=" + new Date().getTime();
+                const pathWithTime = "screen.jpeg?t=" + new Date().getTime();
                 console.log('image received, updateImage: ' + pathWithTime);
-                socket.broadcast.emit('updateImage', socket.nickname, pathWithTime, color);
+                socket.broadcast.emit('ACTION_UPDATE_IMAGE', pathWithTime, color);
             }
         });
     });

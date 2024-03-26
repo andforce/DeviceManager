@@ -13,8 +13,8 @@ Web_client.prototype = {
 
         const image = document.getElementById('image');
 
-        this.socket.on('updateImage', function(user, img, color) {
-            that._updateImage(user, img, color);
+        this.socket.on('ACTION_UPDATE_IMAGE', function(img, color) {
+            that._updateImage(img, color);
         });
 
         // Get the image element
@@ -131,7 +131,7 @@ Web_client.prototype = {
         });
     },
 
-    _updateImage: function(user, pathWithTime, color) {
+    _updateImage: function(pathWithTime, color) {
         const image = document.getElementById('image');
         image.src = pathWithTime;
     }
