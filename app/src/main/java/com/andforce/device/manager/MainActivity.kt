@@ -91,16 +91,22 @@ class MainActivity : AppCompatActivity() {
         viewBinding.rvList.adapter = installedAppAdapter.also {
             it.setOnUninstallClickListener(object : OnUninstallClickListener {
                 override fun onUninstallClick(appBean: AppBean) {
-                    packageManagerViewModel.uninstallApp(applicationContext, appBean.packageName)
+                    lifecycleScope.launch {
+                        packageManagerViewModel.uninstallApp(applicationContext, appBean.packageName)
+                    }
                 }
             })
         }
 
         packageManagerViewModel.uninstallSuccess.observe(this) {
-            packageManagerViewModel.loadInstalledApps(this.applicationContext)
+            lifecycleScope.launch {
+                packageManagerViewModel.loadInstalledApps(applicationContext)
+            }
         }
         packageManagerViewModel.installSuccess.observe(this) {
-            packageManagerViewModel.loadInstalledApps(this.applicationContext)
+            lifecycleScope.launch {
+                packageManagerViewModel.loadInstalledApps(applicationContext)
+            }
         }
         // Load本机应用
         packageManagerViewModel.installedAppsLiveData.observe(this) { it ->
@@ -115,7 +121,10 @@ class MainActivity : AppCompatActivity() {
                 appInfoViewModel.uploadAppInfoList(appInfo)
             }
         }
-        packageManagerViewModel.loadInstalledApps(this.applicationContext)
+
+        lifecycleScope.launch {
+            packageManagerViewModel.loadInstalledApps(applicationContext)
+        }
 
         mediaProjectionRequestViewModel.permissionResult.observe(this) {
             when (it) {
