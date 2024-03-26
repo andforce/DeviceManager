@@ -1,6 +1,5 @@
 package com.andforce.socket
 
-import android.app.Service
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
@@ -13,17 +12,13 @@ import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import com.andforce.socket.viewmodel.SocketEventViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 /**
  * 启动、关闭 ACTION_SOCKET_EVENT_SERVICE
  */
-class SocketEventService: Service() {
+class SocketEventService: CoroutineService() {
 
     companion object {
         const val TAG = "SocketEventService"
@@ -33,11 +28,6 @@ class SocketEventService: Service() {
     private val downloaderViewModel: DownloaderViewModel by inject()
     private val screenCastViewModel: ScreenCastViewModel by inject()
     private val packageManagerViewModel: PackageManagerViewModel by inject()
-
-    private var capturedImageJob: Job? = null
-    private var appUninstallJob: Job? = null
-    private var apkPushEventJob: Job? = null
-    private var apkDownloadJob: Job? = null
 
     private val connectivityManager: ConnectivityManager by lazy {
         getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -69,7 +59,6 @@ class SocketEventService: Service() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
 
@@ -96,7 +85,7 @@ class SocketEventService: Service() {
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
         Log.d(TAG, "registerNetworkCallback")
 
-        capturedImageJob = GlobalScope.launch(Dispatchers.IO) {
+        serviceScope.launch {
             Log.d(TAG, "recordViewModel.capturedImage")
             screenCastViewModel.capturedImageFlow.collect {
                 Log.i("CAPTURE", "start sendBitmapToServer")
@@ -104,7 +93,7 @@ class SocketEventService: Service() {
             }
         }
 
-        apkPushEventJob = GlobalScope.launch(Dispatchers.IO) {
+        serviceScope.launch {
             Log.d(TAG, "socketEventViewModel.apkFilePushEventFlow.collect")
             socketEventViewModel.apkFilePushEventFlow.collect {
                 Log.d(TAG, "collect ApkEvent: $it")
@@ -114,7 +103,7 @@ class SocketEventService: Service() {
             }
         }
 
-        appUninstallJob = GlobalScope.launch(Dispatchers.IO){
+        serviceScope.launch {
             socketEventViewModel.apkUninstallEventFlow.collect(){
                 Log.d(TAG, "collect ApkUninstallEvent: $it")
                 it?.let {
@@ -122,7 +111,8 @@ class SocketEventService: Service() {
                 }
             }
         }
-        apkDownloadJob = GlobalScope.launch(Dispatchers.IO) {
+
+        serviceScope.launch {
             Log.d(TAG, "downloaderViewModel.fileDownloadStateFlow.collect")
             downloaderViewModel.downloadStateFlow.collect {
                 packageManagerViewModel.installApp(applicationContext, it)
@@ -166,11 +156,6 @@ class SocketEventService: Service() {
         stopSystemAutoTouchService()
 
         socketEventViewModel.disconnect()
-
-        capturedImageJob?.cancel()
-        apkPushEventJob?.cancel()
-        apkDownloadJob?.cancel()
-        appUninstallJob?.cancel()
     }
 
     override fun onBind(intent: Intent?) = null

@@ -6,16 +6,12 @@ import android.os.IBinder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
-class CoroutineService: Service() {
+open class CoroutineService: Service() {
 
     val serviceScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate() {
         super.onCreate()
-        serviceScope.launch {
-
-        }
     }
 
     override fun onDestroy() {
