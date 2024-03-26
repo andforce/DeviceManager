@@ -11,9 +11,9 @@ android {
 
     defaultConfig {
         applicationId "com.andforce.device.manager"
-        minSdk 28
+        minSdk 27
         //noinspection ExpiredTargetSdkVersion,OldTargetApi
-        targetSdk 28
+        targetSdk 27
         versionCode 1
         versionName "1.0"
 

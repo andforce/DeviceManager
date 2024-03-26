@@ -11,9 +11,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        minSdk 28
-        //noinspection ExpiredTargetSdkVersion,OldTargetApi
-        targetSdk 28
+        minSdk 27
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,8 +25,8 @@ android {
     }
 
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
 
 
