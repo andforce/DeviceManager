@@ -98,18 +98,18 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        packageManagerViewModel.uninstallSuccess.observe(this) {
+        packageManagerViewModel.appUninstallResult.observe(this) {
             lifecycleScope.launch {
                 packageManagerViewModel.loadInstalledApps(applicationContext)
             }
         }
-        packageManagerViewModel.installSuccess.observe(this) {
+        packageManagerViewModel.appInstallResult.observe(this) {
             lifecycleScope.launch {
                 packageManagerViewModel.loadInstalledApps(applicationContext)
             }
         }
         // Load本机应用
-        packageManagerViewModel.installedAppsLiveData.observe(this) { it ->
+        packageManagerViewModel.appLoadedList.observe(this) { it ->
             installedAppAdapter.setData(it)
             val appInfo = it.filter { !it.isSystem }.map { appBean ->
                 AppInfo(
