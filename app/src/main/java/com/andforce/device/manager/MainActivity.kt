@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         mediaProjectionRequestViewModel.permissionResult.observe(this) {
             when (it) {
                 is MediaProjectionRequestViewModel.Result.Success -> {
-                    ScreenCastService.startService(this, false, it.data, it.resultCode)
+                    ScreenCastService.startService(this, it.data, it.resultCode)
                 }
 
                 MediaProjectionRequestViewModel.Result.PermissionDenied -> {

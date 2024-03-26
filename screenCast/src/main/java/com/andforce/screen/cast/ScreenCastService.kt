@@ -13,6 +13,7 @@ import android.media.projection.MediaProjectionManager
 import android.util.Log
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import com.andforce.service.coroutine.CoroutineService
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 
@@ -27,15 +28,11 @@ class ScreenCastService: CoroutineService() {
 
         const val NOTIFICATION_ID = 1
         // 启动方法
-        fun startService(context: Context, isForeground: Boolean, data: Intent, code: Int) {
+        fun startService(context: Context, data: Intent, code: Int) {
             val startIntent = Intent(context.applicationContext, ScreenCastService::class.java)
             startIntent.putExtra("data", data)
             startIntent.putExtra("code", code)
             context.applicationContext.startForegroundService(startIntent)
-//            if (isForeground) {
-//            } else {
-//                context.applicationContext.startService(startIntent)
-//            }
         }
 
         fun stopService(context: Context) {
@@ -73,13 +70,17 @@ class ScreenCastService: CoroutineService() {
         } else {
             Log.d(TAG, "onStartCommand, code:$code, data:$data")
 
-            val mediaProjection = mpm!!.getMediaProjection(code, data)
-            mp = mediaProjection
-            if (mediaProjection == null) {
+            mp = mpm!!.getMediaProjection(code, data)
+            if (mp == null) {
                 Log.d(TAG, "onStartCommand, mediaProjection is null")
             } else {
-                screenCastViewModel.startCaptureImages(this, mediaProjection, 0.35f)
-                Log.d(TAG, "onStartCommand, mediaProjection is $mediaProjection")
+                serviceScope.launch {
+                    screenCastViewModel.startCollectCaptureStatue()
+                }
+                serviceScope.launch {
+                    screenCastViewModel.startCaptureImages(this@ScreenCastService, mp!!, 0.35f)
+                }
+                Log.d(TAG, "onStartCommand, mediaProjection is $mp")
             }
         }
 

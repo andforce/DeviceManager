@@ -15,32 +15,29 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ScreenCastViewModel :ViewModel(){
+class ScreenCastViewModel : ViewModel() {
 
     private val recordRepository = ScreenCastRepository()
 
-    private val _capturedImage = MutableStateFlow<ByteArray?>(null)
-    val capturedImageFlow: StateFlow<ByteArray?> get() = _capturedImage
+    private val _capturedImageFlow = MutableStateFlow<ByteArray?>(null)
+    val capturedImageFlow: StateFlow<ByteArray?> = _capturedImageFlow
 
     private val _recordState = MutableStateFlow<RecordState>(RecordState.Stopped)
     val recordState: LiveData<RecordState> = _recordState.asLiveData()
 
-    fun startCaptureImages(context: Context, mp: MediaProjection, scale: Float) {
+    suspend fun startCollectCaptureStatue() {
+        Log.i("CAPTURE", "startCollectCaptureStatue()")
+        recordRepository.recordStatusFlow().collect {
+            _recordState.tryEmit(it)
+        }
+    }
+    suspend fun startCaptureImages(context: Context, mp: MediaProjection, scale: Float) {
         Log.i("CAPTURE", "startCaptureImages()")
-        GlobalScope.launch {
-            recordRepository.recordStatusFlow().collect {
-                _recordState.tryEmit(it)
-            }
-        }
-
-        GlobalScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                _recordState.tryEmit(RecordState.Recording)
-            }
-            recordRepository.captureBitmapFlow(context.applicationContext, mp, scale).collectLatest {
+        _recordState.tryEmit(RecordState.Recording)
+        recordRepository.captureBitmapFlow(context.applicationContext, mp, scale)
+            .collectLatest {
                 Log.i("CAPTURE", "emit captured image")
-                _capturedImage.value = it
+                _capturedImageFlow.value = it
             }
-        }
     }
 }
