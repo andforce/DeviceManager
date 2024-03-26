@@ -5,7 +5,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -13,10 +12,11 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.util.Log
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
+import com.andforce.service.coroutine.CoroutineService
 import org.koin.android.ext.android.inject
 
 
-class ScreenCastService: Service() {
+class ScreenCastService: CoroutineService() {
     private var mpm: MediaProjectionManager? = null
     private var mp: MediaProjection? = null
 

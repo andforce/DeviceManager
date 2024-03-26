@@ -1,4 +1,4 @@
-package com.andforce.socket
+package com.andforce.service.coroutine
 
 import android.app.Service
 import android.content.Intent

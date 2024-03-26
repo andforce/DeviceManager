@@ -1,39 +1,31 @@
 package com.andforce.device.accessibility
 
-import android.app.Service
 import android.content.Intent
-import android.os.IBinder
 import android.util.Log
 import com.andforce.commonutils.ScreenUtils
 import com.andforce.injectevent.InjectEventHelper
+import com.andforce.service.coroutine.CoroutineService
 import com.andforce.socket.mouseevent.MouseEvent
 import com.andforce.socket.viewmodel.SocketEventViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-class SystemAutoTouchService: Service() {
+class SystemAutoTouchService: CoroutineService() {
     companion object {
-        val TAG = "SystemAutoTouchService"
+        const val TAG = "SystemAutoTouchService"
     }
 
     private val socketEventViewModel: SocketEventViewModel by inject()
 
-    private var socketEventJob: Job? = null
-    private var socketMoveEventJob: Job? = null
-
     private val injectEventHelper = InjectEventHelper.getInstance()
-    @OptIn(DelicateCoroutinesApi::class)
+
     override fun onCreate() {
         super.onCreate()
 
         Log.d(TAG, "onCreate")
 
-        socketMoveEventJob = GlobalScope.launch {
-            socketEventViewModel.mouseMoveEventFlow.collect() {
+        serviceScope.launch {
+            socketEventViewModel.mouseMoveEventFlow.collect {
                 if (!AutoTouchManager.isAccessibility) {
                     it?.let {
                         injectEvent(it)
@@ -42,8 +34,8 @@ class SystemAutoTouchService: Service() {
             }
         }
 
-        socketEventJob = GlobalScope.launch {
-            socketEventViewModel.mouseDownUpEventFlow.buffer(capacity = 1024).collect {
+        serviceScope.launch {
+            socketEventViewModel.mouseDownUpEventFlow.collect {
                 if (!AutoTouchManager.isAccessibility) {
                     it?.let {
                         injectEvent(it)
@@ -85,13 +77,6 @@ class SystemAutoTouchService: Service() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        socketEventJob?.cancel()
-        socketMoveEventJob?.cancel()
         Log.d(TAG, "onStartCommand")
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-
-        return null
     }
 }

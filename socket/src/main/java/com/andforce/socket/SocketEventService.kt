@@ -11,6 +11,7 @@ import com.andforce.device.applock.AvoidList
 import com.andforce.device.packagemanager.apps.PackageManagerViewModel
 import com.andforce.network.download.DownloaderViewModel
 import com.andforce.screen.cast.coroutine.ScreenCastViewModel
+import com.andforce.service.coroutine.CoroutineService
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -104,7 +105,7 @@ class SocketEventService: CoroutineService() {
         }
 
         serviceScope.launch {
-            socketEventViewModel.apkUninstallEventFlow.collect(){
+            socketEventViewModel.apkUninstallEventFlow.collect {
                 Log.d(TAG, "collect ApkUninstallEvent: $it")
                 it?.let {
                     packageManagerViewModel.uninstallApp(applicationContext, it.packageName)

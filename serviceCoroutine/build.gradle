@@ -3,46 +3,37 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-apply plugin: 'com.andforce.smart.builder'
-
 android {
-    namespace 'com.andforce.screen.cast'
-
+    namespace 'com.andforce.service.coroutine'
     compileSdk 34
 
     defaultConfig {
         minSdk 28
-        //noinspection ExpiredTargetSdkVersion,OldTargetApi
-        targetSdk 28
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-
-
     kotlinOptions {
         jvmTarget = '1.8'
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // 引入协程
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
@@ -57,9 +48,6 @@ dependencies {
     implementation "io.insert-koin:koin-core:3.5.0"
     implementation 'io.insert-koin:koin-android:3.5.0'
 
-    implementation project(':serviceCoroutine')
-    implementation project(':network')
-    implementation project(':packageManager')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
