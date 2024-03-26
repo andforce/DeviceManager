@@ -22,7 +22,7 @@ class PackageManagerViewModel: ViewModel()  {
 
     suspend fun loadInstalledApps(context: Context) = withContext(Dispatchers.IO) {
         val packageManagerHelper = PackageManagerHelper(context)
-        val apps = packageManagerHelper.installedApps.filter { it.packageName != "com.andforce.device.manager" }
+        val apps = packageManagerHelper.installedApps.filter { it.packageName != context.applicationContext.packageName }
         _appLoadedList.postValue(apps)
     }
 
