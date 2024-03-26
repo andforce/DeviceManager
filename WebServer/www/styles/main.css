@@ -18,8 +18,19 @@ footer {
     text-align: center;
 }
 
-#myList {
+#device_app_list {
     width: 400px;
     height: 400px;
-    overflow: auto;
+    border: 4px dashed #000;
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
+}
+#dropzone {
+    width: 400px;
+    height: 400px;
+    border: 4px dashed #000;
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
 }

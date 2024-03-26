@@ -125,7 +125,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     //new image get
-    socket.on('image', function(imgData, color) {
+    socket.on('image', function(imgData) {
         const savePath = path.join(__dirname, "www", 'screen.jpeg');
         fs.writeFile(savePath, imgData, function (err) {
             if (err) {
@@ -133,7 +133,7 @@ io.sockets.on('connection', function(socket) {
             } else {
                 const pathWithTime = "screen.jpeg?t=" + new Date().getTime();
                 console.log('image received, updateImage: ' + pathWithTime);
-                socket.broadcast.emit('ACTION_UPDATE_IMAGE', pathWithTime, color);
+                socket.broadcast.emit('ACTION_UPDATE_IMAGE', pathWithTime);
             }
         });
     });

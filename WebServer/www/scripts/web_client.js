@@ -1,22 +1,15 @@
 
-
 window.onload = function() {
     const socket = io.connect();
 
     const image = document.getElementById('image');
 
-    function _updateImage(pathWithTime, color) {
+    socket.on('ACTION_UPDATE_IMAGE', function(img) {
         const image = document.getElementById('image');
-        image.src = pathWithTime;
-    }
-
-    socket.on('ACTION_UPDATE_IMAGE', function(img, color) {
-        _updateImage(img, color);
+        image.src = img;
     });
 
-    // Get the image element
     let isMouseDown = false;
-
     // Add the dragstart event listener
     image.addEventListener('dragstart', function(event) {
         event.preventDefault();
@@ -26,7 +19,7 @@ window.onload = function() {
 
     // appinfo
     socket.on('ACTION_APPINFO', function (data) {
-        var list = document.getElementById('myList');
+        var list = document.getElementById('device_app_list');
 
         console.log('Received appinfo event', data);
         // 清除掉列表中的所有元素
