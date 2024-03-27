@@ -31,10 +31,10 @@ android {
         }
     }
 
-    // viewBinding
     buildFeatures {
         viewBinding true
         buildConfig true
+        flavorDimensions = ["device"]
     }
 
     buildTypes {
@@ -50,16 +50,25 @@ android {
         }
     }
 
-    flavorDimensions "device"
-
     productFlavors {
         system {
             dimension "device"
             applicationIdSuffix ".system"
+            // 设置AndroidManifest.xml
+            sourceSets {
+                main{
+                    manifest.srcFile "${projectDir}/src/main/flavor_system/AndroidManifest.xml"
+                }
+            }
         }
         normal {
             dimension "device"
             applicationIdSuffix ".normal"
+            sourceSets {
+                main{
+                    manifest.srcFile "${projectDir}/src/main/flavor_system/AndroidManifest.xml"
+                }
+            }
         }
     }
 
