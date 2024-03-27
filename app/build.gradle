@@ -50,6 +50,18 @@ android {
         }
     }
 
+    flavorDimensions "device"
+
+    productFlavors {
+        system {
+            dimension "device"
+            applicationIdSuffix ".system"
+        }
+        normal {
+            dimension "device"
+            applicationIdSuffix ".normal"
+        }
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

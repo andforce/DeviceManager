@@ -133,7 +133,6 @@ object AvoidList {
         "com.android.providers.contacts",
         "com.android.captiveportallogin",
         "com.android.internal.systemui.navbar.gestural_narrow_back",
-        "com.andforce.device.manager",
         "android.auto_generated_rro_vendor__",
     )
 }
