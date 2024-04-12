@@ -14,7 +14,9 @@ import com.andforce.screen.cast.coroutine.ScreenCastViewModel
 import com.andforce.service.coroutine.CoroutineService
 import com.andforce.socket.viewmodel.SocketEventViewModel
 import kotlinx.coroutines.launch
+import okio.ByteString.Companion.encode
 import org.koin.android.ext.android.inject
+import java.net.URLEncoder
 
 /**
  * 启动、关闭 ACTION_SOCKET_EVENT_SERVICE
@@ -39,7 +41,7 @@ class SocketEventService: CoroutineService() {
             Log.d(TAG, "ConnectivityManager.NetworkCallback-onAvailable")
 
             // 网络可用时调用
-            socketEventViewModel.connectIfNeed()
+            socketEventViewModel.connectIfNeed(socketUrl())
             socketEventViewModel.listenMouseEventFromSocket()
             socketEventViewModel.listenMouseMoveEventFromSocket()
 
@@ -58,6 +60,11 @@ class SocketEventService: CoroutineService() {
             // 停止自动触摸服务
             stopSystemAutoTouchService()
         }
+    }
+
+    private fun socketUrl(): String {
+        val token = URLEncoder.encode("Q0ivpEi5hPOXhDOM+j9qzpxq/91Y3Yb7yBztVDJphAhG7mE6S5xj9Bv4zaTlKmlk", "UTF-8")
+        return "https://dev-center.66nao.cn/socket?token=$token"
     }
 
     override fun onCreate() {
@@ -99,7 +106,8 @@ class SocketEventService: CoroutineService() {
             socketEventViewModel.apkFilePushEventFlow.collect {
                 Log.d(TAG, "collect ApkEvent: $it")
                 it?.let {
-                    downloaderViewModel.downloadApk(applicationContext, BuildConfig.HOST + it.path)
+                    // TODO: 替换APK下载地址
+                    //downloaderViewModel.downloadApk(applicationContext, BuildConfig.HOST + it.path)
                 }
             }
         }
@@ -138,7 +146,7 @@ class SocketEventService: CoroutineService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
 
-        socketEventViewModel.connectIfNeed()
+        socketEventViewModel.connectIfNeed(socketUrl())
         socketEventViewModel.listenMouseEventFromSocket()
         socketEventViewModel.listenMouseMoveEventFromSocket()
 

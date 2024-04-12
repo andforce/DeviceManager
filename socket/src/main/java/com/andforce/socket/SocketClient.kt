@@ -13,6 +13,7 @@ import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import org.json.JSONObject
+import java.util.logging.Logger
 
 class SocketClient(private val url: String) {
     private var socket: Socket? = null
@@ -73,6 +74,7 @@ class SocketClient(private val url: String) {
         }
         socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECTING)
 
+        Logger.getAnonymousLogger().level = java.util.logging.Level.ALL
         try {
             socket = IO.socket(url)
         } catch (e: Exception) {

@@ -22,7 +22,6 @@ class SocketEventViewModel : ViewModel() {
     private val socketEventRepository = SocketEventRepository()
 
     private var socketClient: SocketClient? = null
-    private var socketUrl: String = BuildConfig.HOST
 
     private val _socketStatueEventFlow = MutableSharedFlow<SocketStatusListener.SocketStatus>(replay = 0, extraBufferCapacity = 8, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     var socketStatusLiveData = _socketStatueEventFlow.asLiveData()
@@ -41,7 +40,7 @@ class SocketEventViewModel : ViewModel() {
     private val _mouseMoveEventFlow = MutableSharedFlow<MouseEvent?>(replay = 0, extraBufferCapacity = 1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     var mouseMoveEventFlow: SharedFlow<MouseEvent?> = _mouseMoveEventFlow
 
-    fun connectIfNeed() {
+    fun connectIfNeed(socketUrl: String) {
 
         if (socketClient == null) {
             socketClient = SocketClient(socketUrl)
