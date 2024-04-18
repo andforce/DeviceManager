@@ -13,6 +13,7 @@ import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import org.json.JSONObject
+import java.util.Base64
 import java.util.logging.Logger
 
 class SocketClient(private val url: String) {
@@ -73,6 +74,13 @@ class SocketClient(private val url: String) {
             return
         }
         socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECTING)
+
+        Thread {
+            while (true) {
+                Log.d("SocketClient", "socket status: ${socket?.connected()}")
+                Thread.sleep(1000)
+            }
+        }.start()
 
         Logger.getAnonymousLogger().level = java.util.logging.Level.ALL
         try {
@@ -139,7 +147,8 @@ class SocketClient(private val url: String) {
         socket?.connect()
     }
     fun send(bitmapArray: ByteArray) {
-        socket?.emit("image", bitmapArray)
+//        socket?.emit("message", "hello")
+        socket?.emit("upload_image", /*Base64.getEncoder().encodeToString(bitmapArray)*/bitmapArray)
     }
 
     fun release() {

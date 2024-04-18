@@ -72,7 +72,8 @@ window.onload = function() {
     image.addEventListener('mousedown', function(event) {
         isMouseDown = true;
         console.log("start to emit [mouse-down] event");
-        socket.emit('mouse-down', {
+        socket.emit('mouse_event', {
+            event: 'down',
             x: event.offsetX,
             y: event.offsetY,
             width: image.clientWidth,
@@ -87,7 +88,8 @@ window.onload = function() {
             return;
         }
         console.log("start to emit [mouse-up] event");
-        socket.emit('mouse-up', {
+        socket.emit('mouse_event', {
+            event: 'up',
             x: event.offsetX,
             y: event.offsetY,
             width: image.clientWidth,
@@ -102,7 +104,8 @@ window.onload = function() {
             return;
         }
         console.log("start to emit [mouse-up-mouseleave] event");
-        socket.emit('mouse-up', {
+        socket.emit('mouse_event', {
+            event: 'up',
             x: event.offsetX,
             y: event.offsetY,
             width: image.clientWidth,
@@ -115,7 +118,8 @@ window.onload = function() {
     image.addEventListener('mousemove', function(event) {
         if (isMouseDown) {
             console.log("start to emit [mousemove] event, event.offsetX: " + event.offsetX + ", event.offsetY: " + event.offsetY);
-            socket.emit('mouse-move', {
+            socket.emit('mouse_event', {
+                event: 'move',
                 x: event.offsetX,
                 y: event.offsetY,
                 width: image.clientWidth,

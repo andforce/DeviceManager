@@ -98,21 +98,11 @@ io.sockets.on('connection', function(socket) {
         delete sockets[socket.id];
     });
 
-    // on mousedown
-    socket.on('mouse-down', function(data) {
-        console.log("received mousedown event, start emit mousedown event");
-        socket.broadcast.emit('mouse-down', data);
+    socket.on('mouse_event', function(data) {
+        console.log("received mouse_event event, start emit mouse_event event");
+        socket.broadcast.emit('mouse_event', data);
     });
-    // on mouseup
-    socket.on('mouse-up', function(data) {
-        console.log("received mouse-up event, start broadcast mouse-up event");
-        socket.broadcast.emit('mouse-up', data);
-    });
-    // on mousemove
-    socket.on('mouse-move', function(data) {
-        console.log('mousemove event:', data);
-        socket.broadcast.emit('mouse-move', data);
-    });
+
     // apk upload
     socket.on('apk-upload', function(data) {
         console.log('apk-upload event:', data);
@@ -125,7 +115,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     //new image get
-    socket.on('image', function(imgData) {
+    socket.on('upload_image', function(imgData) {
         const savePath = path.join(__dirname, "www", 'screen.jpeg');
         fs.writeFile(savePath, imgData, function (err) {
             if (err) {
