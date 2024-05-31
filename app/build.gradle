@@ -10,7 +10,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.andforce.device.manager"
+        applicationId "cn.llnao.mdm.monitor"
         minSdk 27
         //noinspection ExpiredTargetSdkVersion,OldTargetApi
         targetSdk 27

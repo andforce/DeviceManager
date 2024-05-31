@@ -19,6 +19,10 @@ class SmartBuilderPlugin implements Plugin<Project> {
             file.delete()
         }
 
+        if (file.exists()) {
+            file.write("")
+        }
+
         def full_sdk = project.rootProject.file('full_sdk.jar')
 
         project.dependencies {
@@ -54,73 +58,73 @@ class SmartBuilderPlugin implements Plugin<Project> {
                 javaCompile.options.compilerArgs.add('-Xbootclasspath/p:' + UnlimitedSDK)
             }
 
-            // 修改iml文件
-            // 获取rootProject根路径
-            def imlFileName = project.rootProject.name + '.' + project.name + '.main.iml'
-            def imlFile = project.rootProject.file(".idea/modules/" + project.name + "/" + imlFileName)
-            if (ENABLE_LOG) {
-                file.append('===>>  ' + imlFile.absolutePath + '\n')
-            }
-
-
-            if (ENABLE_LOG) {
-                file.append('===>>  Change ' + project.name + '.iml order\n')
-            }
-            try {
-                def parsedXml = (new XmlParser()).parse(imlFile)
-
-                def allChildren = parsedXml.children()
-                for (int i = 0; i < allChildren.size(); i++) {
-                    Object component = allChildren.get(i)
+            project.rootProject.file(".idea/modules/" + project.name + "/").listFiles().each {
+                if (!it.name.contains(".unitTest.iml") && !it.name.contains(".androidTest.iml")) {
                     if (ENABLE_LOG) {
-                        file.append('===>>  ' + component.name() + '\n')
-                    }
-                    if (component.name() != 'component') {
-                        continue
+                        file.append('===>>  ' + it.absolutePath + '\n')
                     }
 
-                    List orderEntry = component.get("orderEntry")
-                    def sdkNode = orderEntry.find { it.'@type' == 'jdk'}
-                    if (sdkNode != null) {
-                        if (ENABLE_LOG) {
-                            file.append('===>> remove sdk node: ' + sdkNode + '\n')
-                        }
-                        component.remove(sdkNode)
-
-                        if (ENABLE_LOG) {
-                            file.append('===>> append sdk node: ' + sdkNode + '\n')
-                        }
-                        component.append(sdkNode)
-                        break
-                    }
+                    changeSDKOrder(it, file)
                 }
+            }
+        }
+    }
 
+    private void changeSDKOrder(imlFile, file) {
+        try {
+            def parsedXml = (new XmlParser()).parse(imlFile)
+
+            def allChildren = parsedXml.children()
+            for (int i = 0; i < allChildren.size(); i++) {
+                Object component = allChildren.get(i)
                 if (ENABLE_LOG) {
-                    file.append('===>>  保存修改\n')
+                    file.append('===>>  ' + component.name() + '\n')
                 }
-                def xml = new FileOutputStream(imlFile)
-                groovy.xml.XmlUtil.serialize(parsedXml, xml)
-                xml.flush()
-                xml.close()
+                if (component.name() != 'component') {
+                    continue
+                }
 
-                if (ENABLE_LOG) {
-                    file.append('===>>  删除多余的空行\n')
+                List orderEntry = component.get("orderEntry")
+                def sdkNode = orderEntry.find { it.'@type' == 'jdk'}
+                if (sdkNode != null) {
+                    if (ENABLE_LOG) {
+                        file.append('===>> remove sdk node: ' + sdkNode + '\n')
+                    }
+                    component.remove(sdkNode)
+
+                    if (ENABLE_LOG) {
+                        file.append('===>> append sdk node: ' + sdkNode + '\n')
+                    }
+                    component.append(sdkNode)
+                    break
                 }
-                // 删除imlFile中的空行
-                def lines = imlFile.readLines()
-                imlFile.withWriter { writer ->
-                    lines.each { line ->
-                        if (line.trim() != '') {
-                            writer.writeLine(line)
-                        }
+            }
+
+            if (ENABLE_LOG) {
+                file.append('===>>  保存修改\n')
+            }
+            def xml = new FileOutputStream(imlFile)
+            groovy.xml.XmlUtil.serialize(parsedXml, xml)
+            xml.flush()
+            xml.close()
+
+            if (ENABLE_LOG) {
+                file.append('===>>  删除多余的空行\n')
+            }
+            // 删除imlFile中的空行
+            def lines = imlFile.readLines()
+            imlFile.withWriter { writer ->
+                lines.each { line ->
+                    if (line.trim() != '') {
+                        writer.writeLine(line)
                     }
                 }
+            }
 
-            } catch (FileNotFoundException e) {
-                // nop, iml not found
-                if (ENABLE_LOG) {
-                    file.append('===>>  ' + e + '\n')
-                }
+        } catch (FileNotFoundException e) {
+            // nop, iml not found
+            if (ENABLE_LOG) {
+                file.append('===>>  ' + e + '\n')
             }
         }
     }
