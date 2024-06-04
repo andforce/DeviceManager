@@ -75,13 +75,6 @@ class SocketClient(private val url: String) {
         }
         socketStatusListener?.onStatus(SocketStatusListener.SocketStatus.CONNECTING)
 
-        Thread {
-            while (true) {
-                Log.d("SocketClient", "socket status: ${socket?.connected()}")
-                Thread.sleep(1000)
-            }
-        }.start()
-
         Logger.getAnonymousLogger().level = java.util.logging.Level.ALL
         try {
             socket = IO.socket(url)
@@ -107,6 +100,28 @@ class SocketClient(private val url: String) {
 
         socket?.on("event", Emitter.Listener { args ->
             Log.d("SocketClient", args[0].toString())
+        })
+
+        socket?.on("mouse_event", Emitter.Listener { args ->
+            val data = args[0] as JSONObject
+            //val down = MouseEvent.Down(1, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+            Log.d("SocketClient", "mousedown: " + data.toString())
+            val event = data.getString("event")
+            when (event) {
+                "down" -> {
+                    val down = MouseEvent.Down(1, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+                    mouseEventListener?.onDown(down)
+                }
+                "up" -> {
+                    val down = MouseEvent.Up(2, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+                    mouseEventListener?.onUp(down)
+                }
+                "move" -> {
+                    val down = MouseEvent.Move(3, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+                    mouseMoveEventListener?.onMove(down)
+                }
+            }
+            //mouseEventListener?.onDown(down)
         })
 
         socket?.on("mouse-down", Emitter.Listener { args ->

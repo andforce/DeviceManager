@@ -63,9 +63,10 @@ class SocketEventService: CoroutineService() {
     }
 
     private fun socketUrl(): String {
-        val token = URLEncoder.encode("ggQHHDvivlWGLuiGbWxqG9wtv1R0PvJU0vjy2fBeWZMscRYVc35FUaySuZqC1+s6", "UTF-8")
-        return "http://10.66.32.239:9112/socket?token=$token"
+        //val token = URLEncoder.encode("ggQHHDvivlWGLuiGbWxqG9wtv1R0PvJU0vjy2fBeWZMscRYVc35FUaySuZqC1+s6", "UTF-8")
+        //return "http://10.66.32.239:9112/socket?token=$token"
         //http://10.66.32.239:9112/socket?token=ggQHHDvivlWGLuiGbWxqG9wtv1R0PvJU0vjy2fBeWZMscRYVc35FUaySuZqC1+s6
+        return "http://10.66.50.24:3001"
     }
 
     override fun onCreate() {

@@ -99,8 +99,12 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('mouse_event', function(data) {
-        console.log("received mouse_event event, start emit mouse_event event");
+        console.log("received mouse_event event, start emit mouse_event event:" + data);
         socket.broadcast.emit('mouse_event', data);
+        // 循环广播给所有的客户端
+        for (var key in sockets) {
+            sockets[key].emit('mouse_event', data);
+        }
     });
 
     // apk upload

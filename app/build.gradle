@@ -51,7 +51,7 @@ android {
     productFlavors {
         system {
             dimension "device"
-            applicationIdSuffix ".system"
+//            applicationIdSuffix ".system"
             // 设置AndroidManifest.xml
             sourceSets {
                 main{
@@ -61,7 +61,7 @@ android {
         }
         normal {
             dimension "device"
-            applicationIdSuffix ".normal"
+//            applicationIdSuffix ".normal"
             sourceSets {
                 main{
                     manifest.srcFile "${projectDir}/src/main/flavor_system/AndroidManifest.xml"

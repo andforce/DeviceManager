@@ -15,11 +15,11 @@ public class AppLockActivityController {
         }
     }
     public void setActivityController(AppLauncherManager.Action action) {
-        try {
-            ActivityManagerNative.getDefault().setActivityController(new ActivityController(action), true);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //ActivityManagerNative.getDefault().setActivityController(new ActivityController(action), true);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
 
     static class ActivityController extends IActivityController.Stub {
