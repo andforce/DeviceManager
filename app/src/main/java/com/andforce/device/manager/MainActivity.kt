@@ -2,6 +2,7 @@ package com.andforce.device.manager
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.VpnService
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cn.llnao.mdm.vpn.MyVpnService
 import com.andforce.device.manager.apps.AppInfoViewModel
 import com.andforce.device.manager.apps.AppInfo
 import com.andforce.device.manager.databinding.ActivityMainBinding
@@ -56,6 +58,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
+
+        viewBinding.vpnStart.setOnClickListener {
+            val intent = VpnService.prepare(this)
+            if (intent != null) {
+                startActivityForResult(intent, 9999)
+            } else {
+                startService(Intent(this, MyVpnService::class.java))
+            }
+        }
 
         downloaderViewModel.apply {
             downloadProcessFlow.observe(this@MainActivity) {
@@ -247,6 +258,13 @@ class MainActivity : AppCompatActivity() {
                     viewBinding.mouseEvent.text = "鼠标事件: MouseUp"
                 }
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 9999 && resultCode == RESULT_OK) {
+            startService(Intent(this, MyVpnService::class.java))
         }
     }
 }
