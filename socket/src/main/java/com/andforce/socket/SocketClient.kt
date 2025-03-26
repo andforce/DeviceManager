@@ -109,26 +109,46 @@ class SocketClient(private val url: String) {
             Log.d("SocketClient", args[0].toString())
         })
 
-        socket?.on("mouse-down", Emitter.Listener { args ->
+        socket?.on("mouse_event", Emitter.Listener { args ->
             val data = args[0] as JSONObject
-            val down = MouseEvent.Down(1, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
-            Log.d("SocketClient", "mousedown" + args[0].toString())
-            mouseEventListener?.onDown(down)
+            Log.d("SocketClient", "mouse_event: $data")
+            val action = data.getString("event")
+            when(action) {
+                "down" -> {
+                    val down = MouseEvent.Down(1, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+                    mouseEventListener?.onDown(down)
+                }
+                "up" -> {
+                    val down = MouseEvent.Up(2, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+                    mouseEventListener?.onUp(down)
+                }
+                "move" -> {
+                    val down = MouseEvent.Move(3, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+                    mouseMoveEventListener?.onMove(down)
+                }
+            }
         })
 
-        socket?.on("mouse-up", Emitter.Listener { args ->
-            Log.d("SocketClient", "mouseup" + args[0].toString())
-            val data = args[0] as JSONObject
-            val down = MouseEvent.Up(2, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
-            mouseEventListener?.onUp(down)
-        })
-
-        socket?.on("mouse-move", Emitter.Listener { args ->
-            Log.d("SocketClient", "mousemove" + args[0].toString())
-            val data = args[0] as JSONObject
-            val down = MouseEvent.Move(3, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
-            mouseMoveEventListener?.onMove(down)
-        })
+//        socket?.on("mouse-down", Emitter.Listener { args ->
+//            val data = args[0] as JSONObject
+//            val down = MouseEvent.Down(1, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+//            Log.d("SocketClient", "mousedown" + args[0].toString())
+//            mouseEventListener?.onDown(down)
+//        })
+//
+//        socket?.on("mouse-up", Emitter.Listener { args ->
+//            Log.d("SocketClient", "mouseup" + args[0].toString())
+//            val data = args[0] as JSONObject
+//            val down = MouseEvent.Up(2, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+//            mouseEventListener?.onUp(down)
+//        })
+//
+//        socket?.on("mouse-move", Emitter.Listener { args ->
+//            Log.d("SocketClient", "mousemove" + args[0].toString())
+//            val data = args[0] as JSONObject
+//            val down = MouseEvent.Move(3, data.getInt("x"), data.getInt("y"), data.getInt("width"), data.getInt("height"))
+//            mouseMoveEventListener?.onMove(down)
+//        })
 
         socket?.on("apk-upload", Emitter.Listener { args ->
             val data = args[0] as JSONObject

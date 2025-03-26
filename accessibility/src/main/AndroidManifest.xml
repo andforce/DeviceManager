@@ -14,11 +14,11 @@
                 android:resource="@xml/auto_touch" />
         </service>
 
-        <service android:name=".SystemAutoTouchService"
+<!--        <service android:name=".SystemAutoTouchService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.andforce.SystemAutoTouchService" />
             </intent-filter>
-        </service>
+        </service>-->
     </application>
 </manifest>

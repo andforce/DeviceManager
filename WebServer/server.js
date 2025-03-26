@@ -94,12 +94,12 @@ io.sockets.on('connection', function(socket) {
     sockets[socket.id] = socket;
     //user leaves
     socket.on('disconnect', function() {
-        console.log('a user disconnected');
+        console.log('a user disconnected: ' + socket.id);
         delete sockets[socket.id];
     });
 
     socket.on('mouse_event', function(data) {
-        console.log("received mouse_event event, start emit mouse_event event");
+        console.log("received mouse_event event, start emit mouse_event event: " + data.event + " " + data.x + " " + data.y);
         socket.broadcast.emit('mouse_event', data);
     });
 

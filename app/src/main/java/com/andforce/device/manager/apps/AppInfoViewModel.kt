@@ -9,7 +9,7 @@ import com.andforce.network.api.jsonApiCall
 class AppInfoViewModel : ViewModel() {
 
     // TODO: 替换成真实的HOST
-    private val host = "http://localhost"
+    private val host = "http://10.66.39.29:3001"
     private val appInfoService = ServiceFactory.createService(host, AppInfoService::class.java)
 
     suspend fun uploadAppInfoList(appInfo: List<AppInfo>) {
