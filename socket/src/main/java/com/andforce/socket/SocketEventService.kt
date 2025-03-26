@@ -63,8 +63,9 @@ class SocketEventService: CoroutineService() {
     }
 
     private fun socketUrl(): String {
-        val token = URLEncoder.encode("ggQHHDvivlWGLuiGbWxqG9wtv1R0PvJU0vjy2fBeWZMscRYVc35FUaySuZqC1+s6", "UTF-8")
-        return "http://10.66.32.239:9112/socket?token=$token"
+        //val token = URLEncoder.encode("ggQHHDvivlWGLuiGbWxqG9wtv1R0PvJU0vjy2fBeWZMscRYVc35FUaySuZqC1+s6", "UTF-8")
+        //return "http://10.66.39.29:3001/socket?token=$token"
+        return "http://10.66.39.29:3001"
         //http://10.66.32.239:9112/socket?token=ggQHHDvivlWGLuiGbWxqG9wtv1R0PvJU0vjy2fBeWZMscRYVc35FUaySuZqC1+s6
     }
 

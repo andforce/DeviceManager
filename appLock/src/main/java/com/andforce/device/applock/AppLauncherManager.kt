@@ -8,7 +8,7 @@ object AppLauncherManager {
     fun forceStopPackage(pkg: String) = controller.forceStopPackage(pkg)
 
     fun startListener(action: Action) {
-        controller.setActivityController(action)
+        //controller.setActivityController(action)
     }
 
     interface Action {

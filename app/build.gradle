@@ -64,7 +64,7 @@ android {
             applicationIdSuffix ".normal"
             sourceSets {
                 main{
-                    manifest.srcFile "${projectDir}/src/main/flavor_system/AndroidManifest.xml"
+                    manifest.srcFile "${projectDir}/src/main/flavor_normal/AndroidManifest.xml"
                 }
             }
         }
